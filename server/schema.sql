@@ -46,3 +46,13 @@ CREATE INDEX IF NOT EXISTS idx_events_created_at ON events (created_at);
 CREATE INDEX IF NOT EXISTS idx_events_session_id ON events (session_id);
 CREATE INDEX IF NOT EXISTS idx_sessions_project_id ON sessions (project_id);
 CREATE INDEX IF NOT EXISTS idx_decisions_project_id ON decisions (project_id);
+
+CREATE TABLE IF NOT EXISTS projects (
+  project_id   TEXT PRIMARY KEY,
+  name         TEXT NOT NULL,
+  invite_code  TEXT NOT NULL UNIQUE,
+  secret       TEXT NOT NULL,
+  created_at   INTEGER NOT NULL
+);
+
+CREATE INDEX IF NOT EXISTS idx_projects_invite_code ON projects (invite_code);
