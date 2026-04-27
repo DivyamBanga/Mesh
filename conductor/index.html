@@ -1447,7 +1447,16 @@ html, body {
     <section class="agent-grid-section">
       <div class="agent-grid-header">
         <span class="agent-grid-title">Connected Agents</span>
-        <span class="agent-grid-badge" id="agent-count-badge">4 online</span>
+        <div style="display:flex;gap:6px;align-items:center">
+          <button class="header-btn" id="toggle-topo-btn" title="Toggle mesh topology" onclick="toggleTopology()" style="width:28px;height:28px">
+            <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" width="14" height="14"><circle cx="4" cy="4" r="2"/><circle cx="12" cy="4" r="2"/><circle cx="8" cy="12" r="2"/><line x1="5.5" y1="5" x2="7" y2="10.5"/><line x1="10.5" y1="5" x2="9" y2="10.5"/><line x1="6" y1="4" x2="10" y2="4"/></svg>
+          </button>
+          <span class="agent-grid-badge" id="agent-count-badge">4 online</span>
+        </div>
+      </div>
+      <!-- Mesh Topology Graph -->
+      <div class="topology-container" id="topology-container" style="display:none">
+        <svg class="topology-svg" id="topology-svg" viewBox="0 0 600 160"></svg>
       </div>
       <div class="agent-grid" id="agent-grid"></div>
     </section>
@@ -1472,6 +1481,7 @@ html, body {
       <button class="activity-tab active" onclick="switchActivityTab('events')">Events</button>
       <button class="activity-tab" onclick="switchActivityTab('decisions')">Decisions</button>
       <button class="activity-tab" onclick="switchActivityTab('comms')">Comms<span class="tab-badge" id="comms-badge" style="display:none"></span></button>
+      <button class="activity-tab" onclick="switchActivityTab('milestones')">Tasks</button>
     </div>
     <div class="activity-content">
       <div class="activity-feed-container active" id="events-tab">
@@ -1482,6 +1492,11 @@ html, body {
       </div>
       <div class="activity-feed-container" id="comms-tab">
         <div class="activity-feed" id="comms-feed"></div>
+      </div>
+      <div class="activity-feed-container" id="milestones-tab">
+        <div class="heatmap-bar" id="heatmap-bar"></div>
+        <div class="heatmap-label"><span>File activity (last 30min)</span><span>auth · api · ui · db</span></div>
+        <div class="activity-feed" id="milestone-feed"></div>
       </div>
     </div>
   </aside>
@@ -2042,11 +2057,143 @@ document.addEventListener('DOMContentLoaded', () => {
       input.value = '';
       setTimeout(() => {
         appendTerminalLine({ type: 'output', text: `\n  Processing: "${cmd}"...\n` });
-        appendTerminalLine({ type: 'tool', name: 'pair_get_partner_context', detail: 'Checking team status before starting...' });
+        appendTerminalLine({ type: 'tool', name: 'mesh_get_partner_context', detail: 'Checking team status before starting...' });
       }, 500);
     }
   });
 });
+
+// --- Mesh Topology ---
+let topologyVisible = false;
+
+function toggleTopology() {
+  topologyVisible = !topologyVisible;
+  const container = document.getElementById('topology-container');
+  container.style.display = topologyVisible ? 'block' : 'none';
+  if (topologyVisible) renderTopology();
+}
+
+function renderTopology() {
+  const svg = document.getElementById('topology-svg');
+  const colors = { 'Divya': '#06b6d4', 'Alex': '#8b5cf6', 'Sam': '#10b981', 'Jordan': '#f59e0b' };
+  const statusColors = { working: '#10b981', thinking: '#f59e0b', waiting: '#8b5cf6', idle: '#4b5574' };
+
+  // Node positions — mesh server at center, agents around it
+  const cx = 300, cy = 80;
+  const nodes = [
+    { x: 150, y: 40, agent: agents[0] },
+    { x: 450, y: 40, agent: agents[1] },
+    { x: 100, y: 120, agent: agents[2] },
+    { x: 500, y: 120, agent: agents[3] },
+  ];
+
+  let html = '';
+
+  // Background grid dots (subtle)
+  for (let gx = 30; gx < 580; gx += 40) {
+    for (let gy = 15; gy < 160; gy += 30) {
+      html += `<circle cx="${gx}" cy="${gy}" r="0.5" fill="#1e2740" opacity="0.4"/>`;
+    }
+  }
+
+  // Server hub node
+  html += `
+    <circle cx="${cx}" cy="${cy}" r="16" fill="#111728" stroke="#283352" stroke-width="1"/>
+    <text x="${cx}" y="${cy + 1}" text-anchor="middle" dominant-baseline="middle" fill="#8b95ad" font-family="var(--font-mono)" font-size="8" font-weight="600">MESH</text>
+  `;
+
+  // Connection lines from each agent to hub
+  nodes.forEach((n, i) => {
+    const color = colors[n.agent.name];
+    const isActive = n.agent.status === 'working' || n.agent.status === 'thinking';
+    html += `<line class="topo-line ${isActive ? 'active' : ''}" x1="${n.x}" y1="${n.y}" x2="${cx}" y2="${cy}" stroke="${color}" stroke-opacity="${isActive ? 0.6 : 0.2}" stroke-width="1"/>`;
+  });
+
+  // Peer-to-peer hint lines (dashed, very subtle)
+  for (let i = 0; i < nodes.length; i++) {
+    for (let j = i + 1; j < nodes.length; j++) {
+      html += `<line x1="${nodes[i].x}" y1="${nodes[i].y}" x2="${nodes[j].x}" y2="${nodes[j].y}" stroke="#1e2740" stroke-width="0.5" stroke-dasharray="2 4" opacity="0.3"/>`;
+    }
+  }
+
+  // Agent nodes
+  nodes.forEach((n) => {
+    const color = colors[n.agent.name];
+    const sc = statusColors[n.agent.status];
+    const isYou = n.agent.isYou;
+    html += `
+      <g class="topo-node">
+        <circle cx="${n.x}" cy="${n.y}" r="${isYou ? 14 : 12}" fill="#111728" stroke="${color}" stroke-width="${isYou ? 2 : 1.5}" class="topo-ring"/>
+        ${n.agent.status === 'working' ? `<circle cx="${n.x}" cy="${n.y}" r="4" fill="${sc}" class="topo-pulse"/>` : `<circle cx="${n.x}" cy="${n.y}" r="3" fill="${sc}"/>`}
+        <text class="topo-label" x="${n.x}" y="${n.y + 24}">${n.agent.name}${isYou ? ' (you)' : ''}</text>
+        <text class="topo-status-label" x="${n.x}" y="${n.y + 33}">${n.agent.status}</text>
+      </g>
+    `;
+  });
+
+  // Animated data packets (small circles moving along lines)
+  nodes.forEach((n, i) => {
+    if (n.agent.status === 'working') {
+      const dx = cx - n.x, dy = cy - n.y;
+      const delay = i * 0.5;
+      html += `<circle r="2" fill="${colors[n.agent.name]}" opacity="0.8">
+        <animateMotion dur="2s" repeatCount="indefinite" begin="${delay}s" path="M${n.x},${n.y} L${cx},${cy}"/>
+      </circle>`;
+    }
+  });
+
+  svg.innerHTML = html;
+}
+
+// --- Milestones ---
+const milestones = [
+  { title: 'Database schema & migrations', agent: 'Jordan', status: 'done', time: '14:06' },
+  { title: 'User authentication (JWT)', agent: 'Divya', status: 'in-progress', time: '14:02' },
+  { title: 'REST API endpoints (CRUD)', agent: 'Alex', status: 'in-progress', time: '14:05' },
+  { title: 'Dashboard UI layout', agent: 'Sam', status: 'in-progress', time: '14:15' },
+  { title: 'API route protection (auth guards)', agent: 'Divya', status: 'pending', time: '' },
+  { title: 'Frontend-backend integration', agent: 'Unassigned', status: 'pending', time: '' },
+  { title: 'Error handling & validation', agent: 'Unassigned', status: 'pending', time: '' },
+  { title: 'Demo preparation & deployment', agent: 'Unassigned', status: 'pending', time: '' },
+];
+
+function renderMilestones() {
+  const feed = document.getElementById('milestone-feed');
+  feed.innerHTML = milestones.map(m => {
+    const checkClass = m.status === 'done' ? 'done' : m.status === 'in-progress' ? 'in-progress' : '';
+    const checkIcon = m.status === 'done' ? '&#10003;' : m.status === 'in-progress' ? '&#9679;' : '';
+    const titleClass = m.status === 'done' ? 'done' : '';
+    return `
+      <div class="milestone-item">
+        <div class="milestone-check ${checkClass}">${checkIcon}</div>
+        <div class="milestone-body">
+          <div class="milestone-title ${titleClass}">${m.title}</div>
+          <div class="milestone-meta">
+            <span class="milestone-agent">${m.agent}</span>
+            ${m.time ? ` · started ${m.time}` : ''}
+          </div>
+        </div>
+      </div>
+    `;
+  }).join('');
+}
+
+// --- File Activity Heatmap ---
+function renderHeatmap() {
+  const bar = document.getElementById('heatmap-bar');
+  // Simulated activity levels per area: auth, api, ui, db
+  const areas = [
+    { label: 'auth', level: 0.8, color: '#06b6d4' },
+    { label: 'api', level: 0.6, color: '#8b5cf6' },
+    { label: 'ui', level: 0.3, color: '#10b981' },
+    { label: 'db', level: 0.9, color: '#f59e0b' },
+  ];
+  bar.innerHTML = areas.map(a => `
+    <div class="heatmap-cell" title="${a.label}: ${Math.round(a.level * 100)}% activity">
+      <div class="heat" style="height:${a.level * 100}%;background:${a.color};opacity:0.6"></div>
+    </div>
+  `).join('');
+}
 
 // --- Init ---
 function initApp() {
@@ -2055,9 +2202,24 @@ function initApp() {
   renderTerminal();
   renderDecisions();
   renderCommunications();
+  renderMilestones();
+  renderHeatmap();
   initialEvents.forEach(ev => addEvent(ev));
   startSimulation();
   setInterval(updateTimer, 1000);
+
+  // Update topology if visible
+  setInterval(() => { if (topologyVisible) renderTopology(); }, 5000);
+
+  // Simulate milestone progress
+  setTimeout(() => {
+    milestones[1].status = 'done';
+    milestones[4].status = 'in-progress';
+    milestones[4].agent = 'Divya';
+    milestones[4].time = new Date().toLocaleTimeString('en-US', { hour12: false, hour: '2-digit', minute: '2-digit' });
+    renderMilestones();
+    showToast('success', '<strong>Divya</strong> completed: User authentication (JWT)');
+  }, 36000);
 
   // Welcome toast
   setTimeout(() => showToast('success', 'Connected to <strong>HackathonApp</strong> — 4 agents online'), 500);
