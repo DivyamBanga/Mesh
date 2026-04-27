@@ -1,7 +1,11 @@
 {
   "permissions": {
     "allow": [
-      "Bash(start:*)"
+      "Bash(start:*)",
+      "Bash(open:*)",
+      "Bash(mkdir:*)",
+      "Bash(cd:*)",
+      "Bash(npm test:*)"
     ]
   }
 }
