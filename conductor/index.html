@@ -3,184 +3,128 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Mesh Conductor</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<title>Mesh</title>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
-/* ============================================================
-   MESH CONDUCTOR — CSS
-   ============================================================ */
-
-/* --- Reset & Variables --- */
+/* === Reset & Variables === */
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
 :root {
-  /* Backgrounds */
-  --bg-root: #06080f;
-  --bg-surface: #0c1019;
-  --bg-card: #111728;
-  --bg-card-hover: #161d30;
-  --bg-panel: #0a0f1a;
-  --bg-input: #0d1220;
-  --bg-terminal: #07090f;
-  --bg-overlay: rgba(4, 6, 14, 0.85);
-
-  /* Borders */
-  --border: #1e2740;
-  --border-light: #283352;
-  --border-focus: #06b6d4;
-
-  /* Accent Colors */
-  --cyan: #06b6d4;
-  --cyan-dim: #0e7490;
-  --cyan-glow: rgba(6, 182, 212, 0.15);
-  --cyan-glow-strong: rgba(6, 182, 212, 0.3);
-  --purple: #8b5cf6;
-  --purple-dim: #6d28d9;
-  --purple-glow: rgba(139, 92, 246, 0.15);
-  --green: #10b981;
-  --green-dim: #059669;
-  --green-glow: rgba(16, 185, 129, 0.15);
-  --amber: #f59e0b;
-  --amber-dim: #d97706;
-  --amber-glow: rgba(245, 158, 11, 0.15);
-  --rose: #ef4444;
-  --rose-dim: #dc2626;
-  --rose-glow: rgba(239, 68, 68, 0.15);
-  --blue: #3b82f6;
-  --blue-glow: rgba(59, 130, 246, 0.15);
-
-  /* Text */
-  --text: #e8ecf4;
-  --text-secondary: #8b95ad;
-  --text-muted: #4b5574;
-  --text-bright: #ffffff;
-
-  /* Typography */
-  --font-ui: 'Inter', -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
-  --font-mono: 'JetBrains Mono', 'Cascadia Code', 'Fira Code', monospace;
-
-  /* Spacing */
-  --radius: 8px;
-  --radius-lg: 12px;
-  --radius-xl: 16px;
-
-  /* Transitions */
-  --transition: 150ms ease;
-  --transition-slow: 300ms ease;
+  --bg: #050505;
+  --bg-card: #0c0c0c;
+  --bg-card-hover: #141414;
+  --bg-input: #0a0a0a;
+  --border: #1a1a1a;
+  --border-hover: #2a2a2a;
+  --text: #b0b0b0;
+  --text-dim: #666;
+  --text-muted: #383838;
+  --text-bright: #e0e0e0;
+  --white: #ffffff;
+  --font: 'JetBrains Mono', 'Cascadia Code', monospace;
+  --font-ui: 'Inter', system-ui, sans-serif;
+  --r: 2px;
 }
 
 html, body {
   height: 100%;
-  font-family: var(--font-ui);
-  background: var(--bg-root);
+  font-family: var(--font);
+  background: var(--bg);
   color: var(--text);
   overflow: hidden;
   -webkit-font-smoothing: antialiased;
 }
 
-/* Scrollbar */
-::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar { width: 4px; }
 ::-webkit-scrollbar-track { background: transparent; }
-::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
-::-webkit-scrollbar-thumb:hover { background: var(--border-light); }
+::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
 
-/* --- Setup Screen --- */
-#setup-screen {
+/* === Grid Background === */
+.grid-bg {
   position: fixed;
   inset: 0;
-  z-index: 1000;
+  background-image:
+    radial-gradient(circle, #181818 1px, transparent 1px);
+  background-size: 24px 24px;
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* === Setup Screen === */
+#setup {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
   display: flex;
   align-items: center;
   justify-content: center;
-  background: var(--bg-root);
-  transition: opacity 0.5s ease, visibility 0.5s ease;
+  background: var(--bg);
+  transition: opacity 0.4s ease, visibility 0.4s ease;
 }
-#setup-screen.hidden { opacity: 0; visibility: hidden; pointer-events: none; }
+#setup.hidden { opacity: 0; visibility: hidden; pointer-events: none; }
 
-.setup-container {
+.setup-inner {
   text-align: center;
-  max-width: 580px;
+  max-width: 480px;
   width: 100%;
   padding: 0 24px;
+  position: relative;
+  z-index: 1;
 }
 
-.mesh-logo {
+.setup-title {
+  font-size: 48px;
+  font-weight: 700;
+  color: var(--white);
+  letter-spacing: 12px;
+  text-transform: uppercase;
   margin-bottom: 12px;
 }
-.mesh-logo svg {
-  width: 72px;
-  height: 72px;
-}
-.mesh-title {
-  font-size: 42px;
-  font-weight: 800;
-  letter-spacing: -1.5px;
-  background: linear-gradient(135deg, var(--cyan), var(--purple));
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-  margin-bottom: 8px;
-}
-.mesh-subtitle {
-  font-size: 16px;
-  color: var(--text-secondary);
+.setup-sub {
+  font-size: 13px;
+  color: var(--text-dim);
   margin-bottom: 48px;
-  line-height: 1.5;
+  line-height: 1.6;
+  font-family: var(--font-ui);
 }
 
 .setup-cards {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 16px;
+  gap: 12px;
   margin-bottom: 32px;
 }
 
 .setup-card {
   background: var(--bg-card);
   border: 1px solid var(--border);
-  border-radius: var(--radius-xl);
-  padding: 32px 24px;
+  border-radius: var(--r);
+  padding: 28px 20px;
   cursor: pointer;
-  transition: var(--transition-slow);
-  position: relative;
-  overflow: hidden;
-}
-.setup-card::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  border-radius: var(--radius-xl);
-  padding: 1px;
-  background: linear-gradient(135deg, transparent, transparent);
-  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-  mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-  -webkit-mask-composite: xor;
-  mask-composite: exclude;
-  transition: var(--transition-slow);
+  transition: 0.2s ease;
+  text-align: left;
 }
 .setup-card:hover {
+  border-color: var(--border-hover);
   background: var(--bg-card-hover);
-  border-color: var(--border-light);
-  transform: translateY(-2px);
-}
-.setup-card:hover::before {
-  background: linear-gradient(135deg, var(--cyan), var(--purple));
 }
 .setup-card-icon {
-  font-size: 32px;
-  margin-bottom: 16px;
+  font-size: 18px;
+  color: var(--text-dim);
   display: block;
+  margin-bottom: 14px;
 }
 .setup-card-title {
-  font-size: 18px;
-  font-weight: 700;
-  margin-bottom: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-bright);
+  margin-bottom: 6px;
 }
 .setup-card-desc {
-  font-size: 13px;
-  color: var(--text-secondary);
+  font-size: 11px;
+  color: var(--text-dim);
   line-height: 1.5;
+  font-family: var(--font-ui);
 }
 
 /* Setup Forms */
@@ -190,8 +134,9 @@ html, body {
 }
 .setup-form.active { display: block; }
 .setup-form h3 {
-  font-size: 20px;
-  font-weight: 700;
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--text-bright);
   margin-bottom: 24px;
 }
 .form-group {
@@ -199,1164 +144,632 @@ html, body {
 }
 .form-group label {
   display: block;
-  font-size: 12px;
+  font-size: 10px;
   font-weight: 600;
   text-transform: uppercase;
-  letter-spacing: 0.5px;
-  color: var(--text-secondary);
+  letter-spacing: 1.5px;
+  color: var(--text-dim);
   margin-bottom: 6px;
 }
 .form-group input {
   width: 100%;
-  padding: 10px 14px;
+  padding: 10px 12px;
   background: var(--bg-input);
   border: 1px solid var(--border);
-  border-radius: var(--radius);
-  color: var(--text);
-  font-family: var(--font-ui);
-  font-size: 14px;
+  border-radius: var(--r);
+  color: var(--text-bright);
+  font-family: var(--font);
+  font-size: 13px;
   outline: none;
-  transition: var(--transition);
+  transition: 0.15s ease;
 }
 .form-group input:focus {
-  border-color: var(--cyan);
-  box-shadow: 0 0 0 3px var(--cyan-glow);
+  border-color: var(--border-hover);
 }
 .form-group input::placeholder { color: var(--text-muted); }
 
-.btn {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  padding: 10px 24px;
-  border-radius: var(--radius);
-  font-family: var(--font-ui);
-  font-size: 14px;
-  font-weight: 600;
-  border: none;
-  cursor: pointer;
-  transition: var(--transition);
-}
-.btn-primary {
-  background: linear-gradient(135deg, var(--cyan), var(--purple));
-  color: white;
-}
-.btn-primary:hover { opacity: 0.9; transform: translateY(-1px); }
-.btn-ghost {
-  background: transparent;
-  color: var(--text-secondary);
-  border: 1px solid var(--border);
-}
-.btn-ghost:hover { border-color: var(--border-light); color: var(--text); }
 .form-actions {
   display: flex;
-  gap: 12px;
+  gap: 8px;
   margin-top: 24px;
 }
+.btn {
+  padding: 10px 20px;
+  border-radius: var(--r);
+  font-family: var(--font);
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: 0.15s ease;
+  letter-spacing: 0.5px;
+}
+.btn-primary {
+  background: var(--white);
+  color: #000;
+  border: 1px solid var(--white);
+}
+.btn-primary:hover { opacity: 0.85; }
+.btn-ghost {
+  background: transparent;
+  color: var(--text-dim);
+  border: 1px solid var(--border);
+}
+.btn-ghost:hover { border-color: var(--border-hover); color: var(--text); }
 
-/* --- Main App Layout --- */
+/* === Loading Screen === */
+#loading {
+  position: fixed;
+  inset: 0;
+  z-index: 99;
+  display: none;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: var(--bg);
+  gap: 32px;
+}
+#loading.active { display: flex; }
+
+.loading-dots {
+  display: flex;
+  gap: 12px;
+}
+.loading-dot {
+  width: 6px;
+  height: 6px;
+  background: var(--text-muted);
+  border-radius: 1px;
+  animation: dot-wave 1.2s ease-in-out infinite;
+}
+.loading-dot:nth-child(1) { animation-delay: 0ms; }
+.loading-dot:nth-child(2) { animation-delay: 100ms; }
+.loading-dot:nth-child(3) { animation-delay: 200ms; }
+.loading-dot:nth-child(4) { animation-delay: 300ms; }
+.loading-dot:nth-child(5) { animation-delay: 400ms; }
+
+@keyframes dot-wave {
+  0%, 60%, 100% { background: var(--text-muted); transform: scale(1); }
+  30% { background: var(--white); transform: scale(1.4); }
+}
+
+.loading-label {
+  font-size: 11px;
+  color: var(--text-muted);
+  letter-spacing: 4px;
+  text-transform: uppercase;
+}
+
+#loading.fade-out {
+  opacity: 0;
+  transition: opacity 0.4s ease;
+}
+
+/* === Main App === */
 #app {
   display: none;
   height: 100vh;
-  grid-template-rows: 52px 1fr 32px;
-  grid-template-columns: 260px 1fr 340px;
+  grid-template-rows: 48px 1fr;
+  grid-template-columns: 360px 1fr;
   grid-template-areas:
-    "header header header"
-    "filetree center activity"
-    "status status status";
+    "header header"
+    "agents feed";
+  position: relative;
+  z-index: 1;
 }
 #app.active { display: grid; }
 
-/* --- Header Bar --- */
+/* === Header === */
 .header {
   grid-area: header;
   display: flex;
   align-items: center;
-  padding: 0 16px;
-  background: var(--bg-surface);
+  padding: 0 20px;
   border-bottom: 1px solid var(--border);
   gap: 16px;
-  z-index: 100;
+  background: var(--bg);
+  z-index: 10;
 }
+
 .header-logo {
-  display: flex;
-  align-items: center;
-  gap: 8px;
+  font-size: 13px;
   font-weight: 700;
-  font-size: 15px;
-  color: var(--text-bright);
-  flex-shrink: 0;
+  color: var(--white);
+  letter-spacing: 4px;
+  text-transform: uppercase;
 }
-.header-logo svg { width: 24px; height: 24px; }
 .header-sep {
   width: 1px;
-  height: 24px;
+  height: 20px;
   background: var(--border);
-  flex-shrink: 0;
 }
 .header-project {
+  font-size: 12px;
+  color: var(--text-dim);
+}
+.header-project strong {
+  color: var(--text-bright);
+  font-weight: 600;
+}
+.header-code {
+  font-size: 11px;
+  color: var(--text-muted);
+  padding: 3px 8px;
+  border: 1px solid var(--border);
+  border-radius: var(--r);
+  cursor: pointer;
+  transition: 0.15s ease;
+  letter-spacing: 1px;
+}
+.header-code:hover {
+  border-color: var(--border-hover);
+  color: var(--text-dim);
+}
+
+.header-right {
+  margin-left: auto;
   display: flex;
   align-items: center;
-  gap: 8px;
-  font-size: 13px;
-  color: var(--text-secondary);
-}
-.header-project-name {
-  color: var(--text);
-  font-weight: 600;
+  gap: 12px;
 }
 .header-agents {
   display: flex;
   align-items: center;
   gap: 6px;
-  margin-left: auto;
 }
-.agent-dot {
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-  background: var(--green);
-  box-shadow: 0 0 6px var(--green);
+.header-dot {
+  width: 6px;
+  height: 6px;
+  background: var(--text-dim);
+  border-radius: 1px;
 }
-.agent-dot.warning { background: var(--amber); box-shadow: 0 0 6px var(--amber); }
-.agent-dot.offline { background: var(--text-muted); box-shadow: none; }
-.header-agent-count {
-  font-size: 12px;
-  font-weight: 600;
-  color: var(--text-secondary);
+.header-dot.active {
+  background: var(--white);
+  box-shadow: 0 0 4px rgba(255,255,255,0.3);
 }
-.header-timer {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  font-family: var(--font-mono);
-  font-size: 13px;
-  font-weight: 600;
-  color: var(--cyan);
-  background: var(--cyan-glow);
-  padding: 4px 12px;
-  border-radius: 20px;
-  border: 1px solid rgba(6, 182, 212, 0.2);
+.header-count {
+  font-size: 11px;
+  color: var(--text-dim);
 }
-.header-timer svg { width: 14px; height: 14px; }
-.header-actions {
-  display: flex;
-  align-items: center;
-  gap: 4px;
-}
-.header-btn {
-  width: 32px;
-  height: 32px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: var(--radius);
-  background: transparent;
-  border: none;
-  color: var(--text-secondary);
+.header-invite-btn {
+  font-size: 11px;
+  color: var(--text-dim);
+  background: none;
+  border: 1px solid var(--border);
+  border-radius: var(--r);
+  padding: 4px 10px;
+  font-family: var(--font);
   cursor: pointer;
-  transition: var(--transition);
+  transition: 0.15s ease;
 }
-.header-btn:hover { background: var(--bg-card); color: var(--text); }
-.header-btn svg { width: 16px; height: 16px; }
+.header-invite-btn:hover {
+  border-color: var(--border-hover);
+  color: var(--text);
+}
 
-/* --- File Tree (Left Panel) --- */
-.filetree-panel {
-  grid-area: filetree;
-  background: var(--bg-panel);
+/* === Agents Panel === */
+.agents-panel {
+  grid-area: agents;
   border-right: 1px solid var(--border);
   display: flex;
   flex-direction: column;
   overflow: hidden;
+  background: var(--bg);
 }
-.panel-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 10px 14px;
-  font-size: 11px;
-  font-weight: 700;
+.panel-title {
+  padding: 14px 20px;
+  font-size: 10px;
+  font-weight: 600;
   text-transform: uppercase;
-  letter-spacing: 0.8px;
-  color: var(--text-secondary);
+  letter-spacing: 2px;
+  color: var(--text-muted);
   border-bottom: 1px solid var(--border);
   flex-shrink: 0;
 }
-.filetree {
+.agents-list {
   flex: 1;
   overflow-y: auto;
-  padding: 6px 0;
-}
-.tree-item {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  padding: 4px 14px;
-  font-size: 13px;
-  cursor: pointer;
-  transition: var(--transition);
-  position: relative;
-}
-.tree-item:hover { background: var(--bg-card); }
-.tree-item.folder { font-weight: 500; }
-.tree-item .indent { width: 16px; display: inline-block; flex-shrink: 0; }
-.tree-icon {
-  width: 16px;
-  height: 16px;
-  flex-shrink: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 12px;
-}
-.tree-icon.folder-icon { color: var(--amber); }
-.tree-icon.file-icon { color: var(--text-muted); }
-.tree-icon.ts-icon { color: var(--blue); }
-.tree-icon.json-icon { color: var(--amber); }
-.tree-icon.css-icon { color: var(--purple); }
-.tree-icon.md-icon { color: var(--text-secondary); }
-.tree-name { flex: 1; }
-.tree-lock {
-  font-size: 10px;
-  padding: 1px 6px;
-  border-radius: 10px;
-  font-weight: 600;
-  flex-shrink: 0;
-}
-.tree-lock.lock-self {
-  background: var(--cyan-glow);
-  color: var(--cyan);
-  border: 1px solid rgba(6, 182, 212, 0.3);
-}
-.tree-lock.lock-other {
-  background: var(--rose-glow);
-  color: var(--rose);
-  border: 1px solid rgba(239, 68, 68, 0.3);
-}
-.tree-lock.lock-partner {
-  background: var(--purple-glow);
-  color: var(--purple);
-  border: 1px solid rgba(139, 92, 246, 0.3);
-}
-
-/* --- Center Panel (Agent Grid + Terminal) --- */
-.center-panel {
-  grid-area: center;
+  padding: 12px;
   display: flex;
   flex-direction: column;
-  overflow: hidden;
-  background: var(--bg-root);
+  gap: 8px;
 }
 
-/* Agent Grid */
-.agent-grid-section {
-  flex-shrink: 0;
-  border-bottom: 1px solid var(--border);
-  background: var(--bg-panel);
-}
-.agent-grid-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 10px 16px;
-  border-bottom: 1px solid var(--border);
-}
-.agent-grid-title {
-  font-size: 11px;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.8px;
-  color: var(--text-secondary);
-}
-.agent-grid-badge {
-  font-size: 11px;
-  font-weight: 600;
-  padding: 2px 8px;
-  border-radius: 10px;
-  background: var(--green-glow);
-  color: var(--green);
-  border: 1px solid rgba(16, 185, 129, 0.2);
-}
-.agent-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
-  gap: 12px;
-  padding: 14px 16px;
-  overflow-x: auto;
-}
-
+/* Agent Card */
 .agent-card {
   background: var(--bg-card);
   border: 1px solid var(--border);
-  border-radius: var(--radius-lg);
-  padding: 14px 16px;
-  transition: var(--transition);
-  position: relative;
-  overflow: hidden;
+  border-radius: var(--r);
+  padding: 16px;
+  transition: 0.15s ease;
 }
-.agent-card::after {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 2px;
-  background: var(--green);
-  transition: var(--transition);
-}
-.agent-card.thinking::after { background: var(--amber); }
-.agent-card.waiting::after { background: var(--purple); }
-.agent-card.idle::after { background: var(--text-muted); }
-.agent-card.you {
-  border-color: var(--cyan-dim);
-  box-shadow: 0 0 0 1px var(--cyan-glow);
-}
-.agent-card.you::after { background: var(--cyan); }
-
 .agent-card:hover {
-  border-color: var(--border-light);
+  border-color: var(--border-hover);
   background: var(--bg-card-hover);
 }
+.agent-card.is-you {
+  border-color: var(--border-hover);
+}
 
-.agent-card-top {
+.agent-top {
   display: flex;
   align-items: center;
   gap: 10px;
   margin-bottom: 10px;
 }
 .agent-avatar {
-  width: 34px;
-  height: 34px;
-  border-radius: 50%;
+  width: 28px;
+  height: 28px;
+  border-radius: var(--r);
+  background: var(--border);
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 13px;
+  font-size: 10px;
   font-weight: 700;
+  color: var(--text-dim);
   flex-shrink: 0;
-  color: white;
 }
-.agent-avatar.av-cyan { background: linear-gradient(135deg, #06b6d4, #0891b2); }
-.agent-avatar.av-purple { background: linear-gradient(135deg, #8b5cf6, #7c3aed); }
-.agent-avatar.av-green { background: linear-gradient(135deg, #10b981, #059669); }
-.agent-avatar.av-amber { background: linear-gradient(135deg, #f59e0b, #d97706); }
-.agent-avatar.av-rose { background: linear-gradient(135deg, #ef4444, #dc2626); }
-.agent-avatar.av-blue { background: linear-gradient(135deg, #3b82f6, #2563eb); }
-
-.agent-info { flex: 1; min-width: 0; }
+.agent-card.is-you .agent-avatar {
+  background: var(--white);
+  color: #000;
+}
+.agent-info {
+  flex: 1;
+  min-width: 0;
+}
 .agent-name {
-  font-size: 13px;
+  font-size: 12px;
   font-weight: 600;
+  color: var(--text-bright);
   display: flex;
   align-items: center;
   gap: 6px;
 }
-.agent-name .you-badge {
+.you-tag {
   font-size: 9px;
-  font-weight: 700;
-  text-transform: uppercase;
+  font-weight: 600;
+  color: var(--text-muted);
+  border: 1px solid var(--border);
+  padding: 1px 5px;
+  border-radius: var(--r);
   letter-spacing: 0.5px;
-  padding: 1px 6px;
-  border-radius: 4px;
-  background: var(--cyan-glow);
-  color: var(--cyan);
-  border: 1px solid rgba(6, 182, 212, 0.3);
 }
 .agent-branch {
-  font-size: 11px;
+  font-size: 10px;
   color: var(--text-muted);
-  font-family: var(--font-mono);
+  margin-top: 2px;
 }
-.agent-status-dot {
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
+.agent-status {
+  display: flex;
+  align-items: center;
+  gap: 5px;
   flex-shrink: 0;
 }
-.agent-status-dot.working { background: var(--green); box-shadow: 0 0 8px var(--green); animation: pulse-glow 2s ease-in-out infinite; }
-.agent-status-dot.thinking { background: var(--amber); box-shadow: 0 0 8px var(--amber); animation: pulse-glow 1.5s ease-in-out infinite; }
-.agent-status-dot.waiting { background: var(--purple); box-shadow: 0 0 8px var(--purple); }
-.agent-status-dot.idle { background: var(--text-muted); }
+.status-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 1px;
+}
+.status-dot.working {
+  background: var(--white);
+  animation: pulse 2s ease-in-out infinite;
+}
+.status-dot.thinking {
+  background: var(--text-dim);
+  animation: blink 1.5s step-end infinite;
+}
+.status-dot.idle {
+  background: var(--text-muted);
+}
 
-@keyframes pulse-glow {
+@keyframes pulse {
   0%, 100% { opacity: 1; }
-  50% { opacity: 0.5; }
+  50% { opacity: 0.3; }
+}
+@keyframes blink {
+  50% { opacity: 0; }
+}
+
+.status-label {
+  font-size: 10px;
+  color: var(--text-muted);
 }
 
 .agent-task {
   font-size: 12px;
-  color: var(--text-secondary);
-  line-height: 1.4;
-  margin-bottom: 8px;
-  display: -webkit-box;
-  -webkit-line-clamp: 2;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
+  color: var(--text);
+  line-height: 1.5;
+  margin-bottom: 10px;
+  font-family: var(--font-ui);
 }
-.agent-meta {
+
+.agent-locks {
   display: flex;
-  align-items: center;
-  gap: 12px;
-  font-size: 11px;
-  color: var(--text-muted);
+  flex-wrap: wrap;
+  gap: 4px;
 }
-.agent-meta-item {
+.lock-tag {
+  font-size: 10px;
+  padding: 2px 7px;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: var(--r);
+  color: var(--text-dim);
   display: flex;
   align-items: center;
   gap: 4px;
 }
-.agent-meta-item svg { width: 12px; height: 12px; }
+.lock-icon {
+  font-size: 8px;
+  opacity: 0.6;
+}
 
-/* --- Terminal Section --- */
-.terminal-section {
-  flex: 1;
+/* === Feed Panel === */
+.feed-panel {
+  grid-area: feed;
   display: flex;
   flex-direction: column;
-  min-height: 0;
-  background: var(--bg-terminal);
+  overflow: hidden;
+  background: var(--bg);
 }
-.terminal-header {
-  display: flex;
-  align-items: center;
-  padding: 8px 16px;
-  background: var(--bg-surface);
-  border-bottom: 1px solid var(--border);
-  border-top: 1px solid var(--border);
-  gap: 12px;
-  flex-shrink: 0;
-}
-.terminal-tab {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  padding: 4px 12px;
-  font-size: 12px;
-  font-weight: 500;
-  color: var(--text-secondary);
-  background: transparent;
-  border: none;
-  border-radius: var(--radius);
-  cursor: pointer;
-  font-family: var(--font-ui);
-  transition: var(--transition);
-}
-.terminal-tab:hover { color: var(--text); background: var(--bg-card); }
-.terminal-tab.active {
-  color: var(--text-bright);
-  background: var(--bg-card);
-}
-.terminal-tab .tab-dot {
-  width: 6px;
-  height: 6px;
-  border-radius: 50%;
-  background: var(--green);
-}
-
-.terminal-body {
+.feed-list {
   flex: 1;
   overflow-y: auto;
-  padding: 12px 16px;
-  font-family: var(--font-mono);
-  font-size: 12.5px;
-  line-height: 1.7;
-  min-height: 0;
-}
-.term-line {
-  display: block;
-  white-space: pre-wrap;
-  word-break: break-all;
-}
-.term-prompt { color: var(--cyan); }
-.term-cmd { color: var(--text-bright); }
-.term-output { color: var(--text-secondary); }
-.term-success { color: var(--green); }
-.term-warning { color: var(--amber); }
-.term-error { color: var(--rose); }
-.term-info { color: var(--blue); }
-.term-dim { color: var(--text-muted); }
-.term-thinking {
-  color: var(--amber);
-  animation: blink 1s step-end infinite;
-}
-@keyframes blink { 50% { opacity: 0; } }
-
-.term-tool-call {
-  display: flex;
-  align-items: flex-start;
-  gap: 8px;
-  padding: 6px 10px;
-  margin: 4px 0;
-  background: var(--bg-card);
-  border-radius: var(--radius);
-  border-left: 2px solid var(--purple);
-}
-.term-tool-icon {
-  color: var(--purple);
-  font-size: 11px;
-  margin-top: 2px;
-}
-.term-tool-text {
-  color: var(--text-secondary);
-  font-size: 12px;
-}
-.term-tool-text strong { color: var(--text); font-weight: 600; }
-
-.term-file-change {
-  padding: 6px 10px;
-  margin: 4px 0;
-  background: var(--bg-card);
-  border-radius: var(--radius);
-  border-left: 2px solid var(--green);
-}
-.term-file-path {
-  font-size: 11px;
-  color: var(--green);
-  margin-bottom: 4px;
-}
-.term-diff-add { color: var(--green); }
-.term-diff-remove { color: var(--rose); }
-
-.terminal-input-area {
-  display: flex;
-  align-items: center;
-  padding: 8px 16px;
-  border-top: 1px solid var(--border);
-  background: var(--bg-surface);
-  flex-shrink: 0;
-}
-.terminal-input-prompt {
-  color: var(--cyan);
-  font-family: var(--font-mono);
-  font-size: 13px;
-  font-weight: 600;
-  margin-right: 8px;
-}
-.terminal-input {
-  flex: 1;
-  background: none;
-  border: none;
-  outline: none;
-  color: var(--text);
-  font-family: var(--font-mono);
-  font-size: 13px;
-}
-.terminal-input::placeholder { color: var(--text-muted); }
-
-/* --- Activity Panel (Right) --- */
-.activity-panel {
-  grid-area: activity;
-  background: var(--bg-panel);
-  border-left: 1px solid var(--border);
-  display: flex;
-  flex-direction: column;
-  overflow: hidden;
-}
-.activity-tabs {
-  display: flex;
-  padding: 0 12px;
-  border-bottom: 1px solid var(--border);
-  flex-shrink: 0;
-}
-.activity-tab {
-  padding: 10px 12px;
-  font-size: 11px;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-  color: var(--text-muted);
-  background: none;
-  border: none;
-  cursor: pointer;
-  border-bottom: 2px solid transparent;
-  transition: var(--transition);
-  font-family: var(--font-ui);
-  position: relative;
-}
-.activity-tab:hover { color: var(--text-secondary); }
-.activity-tab.active {
-  color: var(--cyan);
-  border-bottom-color: var(--cyan);
-}
-.activity-tab .tab-badge {
-  position: absolute;
-  top: 6px;
-  right: 2px;
-  width: 6px;
-  height: 6px;
-  border-radius: 50%;
-  background: var(--rose);
+  padding: 0;
 }
 
-.activity-content {
-  flex: 1;
-  overflow: hidden;
-  display: flex;
-  flex-direction: column;
+/* Feed Item */
+.feed-item {
+  display: grid;
+  grid-template-columns: 48px 72px 1fr;
+  gap: 0 10px;
+  padding: 10px 20px;
+  border-bottom: 1px solid #0e0e0e;
+  transition: 0.15s ease;
+  align-items: start;
 }
-.activity-feed-container {
-  display: none;
-  flex-direction: column;
-  flex: 1;
-  overflow: hidden;
+.feed-item:hover {
+  background: #090909;
 }
-.activity-feed-container.active {
-  display: flex;
-}
-.activity-feed {
-  flex: 1;
-  overflow-y: auto;
-  padding: 8px 0;
+.feed-item.is-conflict {
+  background: #0d0808;
+  border-left: 2px solid #444;
 }
 
-/* Event Items */
-.event-item {
-  display: flex;
-  gap: 10px;
-  padding: 8px 14px;
-  transition: var(--transition);
-  animation: fadeSlideIn 0.3s ease;
-}
-@keyframes fadeSlideIn {
-  from { opacity: 0; transform: translateY(8px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-.event-item:hover { background: var(--bg-card); }
-.event-item.conflict-event {
-  background: var(--rose-glow);
-  border-left: 3px solid var(--rose);
-}
-
-.event-time {
+.feed-time {
   font-size: 10px;
-  font-family: var(--font-mono);
   color: var(--text-muted);
-  flex-shrink: 0;
-  margin-top: 2px;
-  width: 42px;
+  padding-top: 1px;
 }
-.event-badge {
-  display: inline-flex;
-  align-items: center;
-  padding: 1px 7px;
-  border-radius: 4px;
+.feed-type {
   font-size: 10px;
-  font-weight: 600;
-  text-transform: uppercase;
+  color: var(--text-muted);
+  padding-top: 1px;
   letter-spacing: 0.3px;
-  flex-shrink: 0;
-  margin-top: 1px;
 }
-.event-badge.intent { background: var(--blue-glow); color: var(--blue); border: 1px solid rgba(59,130,246,0.2); }
-.event-badge.file_lock { background: var(--amber-glow); color: var(--amber); border: 1px solid rgba(245,158,11,0.2); }
-.event-badge.file_unlock { background: rgba(75,85,116,0.15); color: var(--text-muted); border: 1px solid rgba(75,85,116,0.2); }
-.event-badge.decision { background: var(--green-glow); color: var(--green); border: 1px solid rgba(16,185,129,0.2); }
-.event-badge.question { background: var(--purple-glow); color: var(--purple); border: 1px solid rgba(139,92,246,0.2); }
-.event-badge.answer { background: rgba(139,92,246,0.08); color: #a78bfa; border: 1px solid rgba(139,92,246,0.15); }
-.event-badge.blocker { background: var(--rose-glow); color: var(--rose); border: 1px solid rgba(239,68,68,0.2); }
-.event-badge.blocker_resolved { background: rgba(16,185,129,0.08); color: #6ee7b7; border: 1px solid rgba(16,185,129,0.15); }
-.event-badge.conflict { background: var(--rose); color: white; border: 1px solid var(--rose); }
-.event-badge.heartbeat { background: rgba(75,85,116,0.1); color: var(--text-muted); border: 1px solid rgba(75,85,116,0.15); }
+.feed-type.intent { color: var(--text-dim); }
+.feed-type.lock { color: var(--text-dim); }
+.feed-type.unlock { color: var(--text-muted); }
+.feed-type.decision { color: var(--text-bright); }
+.feed-type.question { color: var(--text-dim); }
+.feed-type.answer { color: var(--text-dim); }
+.feed-type.conflict { color: var(--white); font-weight: 600; }
 
-.event-body { flex: 1; min-width: 0; }
-.event-dev {
-  font-size: 12px;
+.feed-body {}
+.feed-dev {
+  font-size: 11px;
   font-weight: 600;
+  color: var(--text-dim);
   margin-bottom: 2px;
 }
-.event-text {
+.feed-text {
   font-size: 12px;
-  color: var(--text-secondary);
-  line-height: 1.4;
+  color: var(--text);
+  line-height: 1.5;
+  font-family: var(--font-ui);
 }
-.event-files {
+.feed-files {
   display: flex;
   flex-wrap: wrap;
   gap: 4px;
   margin-top: 4px;
 }
-.event-file-tag {
-  font-size: 10px;
-  font-family: var(--font-mono);
+.feed-file {
+  font-size: 9px;
   padding: 1px 6px;
-  background: var(--bg-card);
-  border-radius: 4px;
-  color: var(--text-muted);
   border: 1px solid var(--border);
-}
-
-/* Decision Items */
-.decision-item {
-  padding: 12px 14px;
-  border-bottom: 1px solid var(--border);
-  transition: var(--transition);
-}
-.decision-item:hover { background: var(--bg-card); }
-.decision-category {
-  display: inline-flex;
-  font-size: 10px;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.3px;
-  padding: 1px 7px;
-  border-radius: 4px;
-  background: var(--green-glow);
-  color: var(--green);
-  border: 1px solid rgba(16,185,129,0.2);
-  margin-bottom: 6px;
-}
-.decision-summary {
-  font-size: 13px;
-  font-weight: 500;
-  margin-bottom: 4px;
-}
-.decision-rationale {
-  font-size: 11px;
-  color: var(--text-muted);
-  line-height: 1.4;
-}
-.decision-meta {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  margin-top: 6px;
-  font-size: 10px;
+  border-radius: var(--r);
   color: var(--text-muted);
 }
 
-/* Communication */
-.comm-item {
-  padding: 12px 14px;
-  border-bottom: 1px solid var(--border);
-}
-.comm-question {
-  display: flex;
-  gap: 8px;
-  margin-bottom: 8px;
-}
-.comm-q-mark {
-  width: 20px;
-  height: 20px;
-  border-radius: 50%;
-  background: var(--purple-glow);
-  color: var(--purple);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 11px;
-  font-weight: 700;
-  flex-shrink: 0;
-  border: 1px solid rgba(139,92,246,0.3);
-}
-.comm-q-text {
-  font-size: 12px;
-  line-height: 1.5;
-}
-.comm-q-from {
-  font-size: 10px;
-  font-weight: 600;
-  color: var(--purple);
-  margin-bottom: 2px;
-}
-.comm-answer {
-  margin-left: 28px;
-  padding: 8px 12px;
-  background: var(--bg-card);
-  border-radius: var(--radius);
-  border-left: 2px solid var(--green);
-}
-.comm-a-text {
-  font-size: 12px;
-  color: var(--text-secondary);
-  line-height: 1.5;
-}
-.comm-a-from {
-  font-size: 10px;
-  font-weight: 600;
-  color: var(--green);
-  margin-bottom: 2px;
-}
-.comm-pending {
-  margin-left: 28px;
-  font-size: 11px;
-  color: var(--text-muted);
-  font-style: italic;
-}
-
-/* --- Status Bar --- */
-.statusbar {
-  grid-area: status;
-  display: flex;
-  align-items: center;
-  padding: 0 14px;
-  background: var(--bg-surface);
-  border-top: 1px solid var(--border);
-  font-size: 11px;
-  color: var(--text-muted);
-  gap: 4px;
-}
-.status-item {
-  display: flex;
-  align-items: center;
-  gap: 5px;
-  padding: 0 10px;
-}
-.status-item:not(:last-child) {
-  border-right: 1px solid var(--border);
-}
-.status-dot {
-  width: 6px;
-  height: 6px;
-  border-radius: 50%;
-}
-.status-dot.connected { background: var(--green); box-shadow: 0 0 4px var(--green); }
-.status-dot.disconnected { background: var(--rose); }
-.status-value { font-weight: 600; color: var(--text-secondary); }
-.statusbar-right {
-  margin-left: auto;
-  display: flex;
-  align-items: center;
-  gap: 4px;
-}
-
-/* --- Animations & Utils --- */
-.fade-in {
-  animation: fadeIn 0.5s ease;
-}
-@keyframes fadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
-}
-
-.slide-up {
-  animation: slideUp 0.4s ease;
-}
-@keyframes slideUp {
-  from { opacity: 0; transform: translateY(20px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-
-/* Conflict flash */
-@keyframes conflict-flash {
-  0%, 100% { background: transparent; }
-  50% { background: var(--rose-glow); }
-}
-.conflict-highlight {
-  animation: conflict-flash 0.5s ease 3;
-}
-
-/* Connection line animation */
-@keyframes data-flow {
-  0% { stroke-dashoffset: 20; }
-  100% { stroke-dashoffset: 0; }
-}
-
-/* Invite modal */
+/* === Invite Modal === */
 .modal-overlay {
   position: fixed;
   inset: 0;
-  background: var(--bg-overlay);
+  background: rgba(0,0,0,0.8);
   z-index: 200;
   display: none;
   align-items: center;
   justify-content: center;
-  backdrop-filter: blur(4px);
 }
 .modal-overlay.active { display: flex; }
+
 .modal {
   background: var(--bg-card);
   border: 1px solid var(--border);
-  border-radius: var(--radius-xl);
+  border-radius: var(--r);
   padding: 28px;
-  width: 420px;
+  width: 380px;
   max-width: 90vw;
-  animation: slideUp 0.3s ease;
+  animation: modal-in 0.2s ease;
+}
+@keyframes modal-in {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 .modal h3 {
-  font-size: 18px;
-  font-weight: 700;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-bright);
   margin-bottom: 8px;
 }
 .modal p {
-  font-size: 13px;
-  color: var(--text-secondary);
+  font-size: 12px;
+  color: var(--text-dim);
   margin-bottom: 20px;
   line-height: 1.5;
-}
-.invite-code {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  padding: 12px 16px;
-  background: var(--bg-input);
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
-  font-family: var(--font-mono);
-  font-size: 16px;
-  font-weight: 600;
-  color: var(--cyan);
-  letter-spacing: 2px;
-  margin-bottom: 16px;
-}
-.invite-code .copy-btn {
-  margin-left: auto;
-  padding: 4px 10px;
-  font-size: 11px;
-  font-weight: 600;
-  background: var(--bg-card);
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
-  color: var(--text-secondary);
-  cursor: pointer;
   font-family: var(--font-ui);
 }
-.invite-code .copy-btn:hover { color: var(--text); border-color: var(--border-light); }
+.invite-code-box {
+  display: flex;
+  align-items: center;
+  padding: 12px 14px;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: var(--r);
+  margin-bottom: 12px;
+}
+.invite-code-text {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--white);
+  letter-spacing: 3px;
+  flex: 1;
+}
+.copy-btn {
+  font-size: 10px;
+  font-weight: 600;
+  padding: 4px 10px;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--r);
+  color: var(--text-dim);
+  font-family: var(--font);
+  cursor: pointer;
+  transition: 0.15s ease;
+}
+.copy-btn:hover { color: var(--text); border-color: var(--border-hover); }
+
+.cli-hint {
+  font-size: 10px;
+  color: var(--text-muted);
+  padding: 8px 12px;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: var(--r);
+  margin-bottom: 20px;
+}
 .modal-close {
   width: 100%;
   padding: 10px;
-  background: var(--bg-input);
+  background: var(--bg);
   border: 1px solid var(--border);
-  border-radius: var(--radius);
-  color: var(--text-secondary);
-  font-family: var(--font-ui);
-  font-size: 13px;
-  font-weight: 600;
+  border-radius: var(--r);
+  color: var(--text-dim);
+  font-family: var(--font);
+  font-size: 12px;
+  font-weight: 500;
   cursor: pointer;
-  transition: var(--transition);
+  transition: 0.15s ease;
 }
-.modal-close:hover { border-color: var(--border-light); color: var(--text); }
+.modal-close:hover { border-color: var(--border-hover); color: var(--text); }
 
-/* Notification Toast */
+/* === Toast === */
 .toast-container {
   position: fixed;
-  top: 60px;
+  top: 56px;
   right: 16px;
-  z-index: 500;
+  z-index: 300;
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 6px;
 }
 .toast {
   display: flex;
   align-items: center;
-  gap: 10px;
-  padding: 10px 16px;
+  gap: 8px;
+  padding: 8px 14px;
   background: var(--bg-card);
   border: 1px solid var(--border);
-  border-radius: var(--radius);
-  font-size: 13px;
-  animation: toastSlide 0.3s ease;
-  box-shadow: 0 8px 24px rgba(0,0,0,0.4);
-  max-width: 360px;
+  border-radius: var(--r);
+  font-size: 12px;
+  color: var(--text);
+  font-family: var(--font-ui);
+  animation: toast-in 0.25s ease;
+  max-width: 340px;
 }
-@keyframes toastSlide {
-  from { opacity: 0; transform: translateX(20px); }
+.toast.conflict-toast {
+  border-left: 2px solid var(--white);
+}
+@keyframes toast-in {
+  from { opacity: 0; transform: translateX(12px); }
   to { opacity: 1; transform: translateX(0); }
 }
-.toast.conflict {
-  border-color: var(--rose-dim);
-  border-left: 3px solid var(--rose);
-}
-.toast.info {
-  border-color: var(--cyan-dim);
-  border-left: 3px solid var(--cyan);
-}
-.toast.success {
-  border-color: var(--green-dim);
-  border-left: 3px solid var(--green);
-}
-.toast-icon { font-size: 16px; flex-shrink: 0; }
-.toast-text { flex: 1; color: var(--text-secondary); }
-
-/* --- Mesh Topology Visualization --- */
-.topology-container {
-  position: relative;
-  width: 100%;
-  height: 160px;
-  margin-bottom: 8px;
-  overflow: hidden;
-}
-.topology-svg {
-  width: 100%;
-  height: 100%;
-}
-.topo-node {
-  cursor: pointer;
-  transition: var(--transition);
-}
-.topo-node:hover .topo-ring { stroke-width: 3; }
-.topo-label {
-  font-family: var(--font-ui);
-  font-size: 9px;
-  font-weight: 600;
-  fill: var(--text-secondary);
-  text-anchor: middle;
-}
-.topo-status-label {
-  font-family: var(--font-ui);
-  font-size: 7px;
-  fill: var(--text-muted);
-  text-anchor: middle;
-}
-.topo-line {
-  stroke-dasharray: 4 3;
-  animation: topo-flow 1.5s linear infinite;
-}
-@keyframes topo-flow {
-  to { stroke-dashoffset: -7; }
-}
-.topo-line.active {
-  stroke-width: 1.5;
-  filter: drop-shadow(0 0 3px currentColor);
-}
-.topo-pulse {
-  animation: topo-pulse-anim 2s ease-in-out infinite;
-}
-@keyframes topo-pulse-anim {
-  0%, 100% { r: 4; opacity: 1; }
-  50% { r: 6; opacity: 0.6; }
-}
-
-/* Data packet animation on topology lines */
-.topo-packet {
-  animation: topo-packet-move 2s linear infinite;
-}
-@keyframes topo-packet-move {
-  0% { offset-distance: 0%; opacity: 0; }
-  10% { opacity: 1; }
-  90% { opacity: 1; }
-  100% { offset-distance: 100%; opacity: 0; }
-}
-
-/* --- Milestones Panel --- */
-.milestone-item {
-  display: flex;
-  align-items: flex-start;
-  gap: 10px;
-  padding: 10px 14px;
-  border-bottom: 1px solid var(--border);
-  transition: var(--transition);
-}
-.milestone-item:hover { background: var(--bg-card); }
-.milestone-check {
-  width: 18px;
-  height: 18px;
-  border-radius: 4px;
-  border: 2px solid var(--border-light);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
-  margin-top: 1px;
-  cursor: pointer;
-  transition: var(--transition);
-  font-size: 10px;
-  color: transparent;
-}
-.milestone-check.done {
-  background: var(--green);
-  border-color: var(--green);
-  color: white;
-}
-.milestone-check.in-progress {
-  border-color: var(--amber);
-  background: var(--amber-glow);
-  color: var(--amber);
-}
-.milestone-body { flex: 1; }
-.milestone-title {
+.toast-icon {
   font-size: 12px;
-  font-weight: 500;
-  margin-bottom: 2px;
-}
-.milestone-title.done { text-decoration: line-through; color: var(--text-muted); }
-.milestone-meta {
-  font-size: 10px;
-  color: var(--text-muted);
-}
-.milestone-agent {
-  display: inline-flex;
-  align-items: center;
-  gap: 3px;
-  padding: 0 5px;
-  background: var(--bg-card);
-  border-radius: 3px;
-  font-size: 10px;
-  font-weight: 600;
-  border: 1px solid var(--border);
+  color: var(--text-dim);
+  flex-shrink: 0;
 }
 
-/* --- Heatmap Bar (file activity) --- */
-.heatmap-bar {
-  display: flex;
-  gap: 2px;
-  padding: 8px 14px;
-  border-bottom: 1px solid var(--border);
+/* === Stagger Animations === */
+.stagger {
+  opacity: 0;
+  transform: translateY(10px);
 }
-.heatmap-cell {
-  flex: 1;
-  height: 6px;
-  border-radius: 2px;
-  background: var(--bg-card);
-  position: relative;
-  overflow: hidden;
+.stagger.in {
+  animation: stagger-in 0.4s ease forwards;
 }
-.heatmap-cell .heat {
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  border-radius: 2px;
-  transition: height 0.5s ease;
+@keyframes stagger-in {
+  to { opacity: 1; transform: translateY(0); }
 }
-.heatmap-label {
-  padding: 2px 14px 8px;
-  display: flex;
-  justify-content: space-between;
-  font-size: 9px;
-  color: var(--text-muted);
-  border-bottom: 1px solid var(--border);
+
+/* Feed stagger from right */
+.stagger-right {
+  opacity: 0;
+  transform: translateX(10px);
 }
-.toast-text strong { color: var(--text); }
+.stagger-right.in {
+  animation: stagger-right-in 0.35s ease forwards;
+}
+@keyframes stagger-right-in {
+  to { opacity: 1; transform: translateX(0); }
+}
+
+/* New feed item animation */
+@keyframes feed-new {
+  from { opacity: 0; transform: translateY(4px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.feed-item-new {
+  animation: feed-new 0.3s ease;
+}
 </style>
 </head>
 <body>
 
-<!-- ==================== SETUP SCREEN ==================== -->
-<div id="setup-screen">
-  <div class="setup-container">
-    <div class="mesh-logo">
-      <svg viewBox="0 0 72 72" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <circle cx="36" cy="12" r="5" fill="#06b6d4" opacity="0.9"/>
-        <circle cx="12" cy="52" r="5" fill="#8b5cf6" opacity="0.9"/>
-        <circle cx="60" cy="52" r="5" fill="#10b981" opacity="0.9"/>
-        <circle cx="36" cy="38" r="4" fill="#f59e0b" opacity="0.7"/>
-        <line x1="36" y1="17" x2="14" y2="48" stroke="#06b6d4" stroke-width="1.5" opacity="0.4"/>
-        <line x1="36" y1="17" x2="58" y2="48" stroke="#06b6d4" stroke-width="1.5" opacity="0.4"/>
-        <line x1="15" y1="52" x2="57" y2="52" stroke="#8b5cf6" stroke-width="1.5" opacity="0.4"/>
-        <line x1="36" y1="17" x2="36" y2="34" stroke="#f59e0b" stroke-width="1.5" opacity="0.3"/>
-        <line x1="14" y1="49" x2="33" y2="38" stroke="#f59e0b" stroke-width="1.5" opacity="0.3"/>
-        <line x1="58" y1="49" x2="39" y2="38" stroke="#f59e0b" stroke-width="1.5" opacity="0.3"/>
-      </svg>
-    </div>
-    <h1 class="mesh-title">Mesh</h1>
-    <p class="mesh-subtitle">Connect your team's Claude Code instances.<br>Coordinate like senior engineers — automatically.</p>
+<div class="grid-bg"></div>
+
+<!-- ===== SETUP SCREEN ===== -->
+<div id="setup">
+  <div class="setup-inner">
+    <h1 class="setup-title">Mesh</h1>
+    <p class="setup-sub">Coordinate multiple Claude Code instances in real time.</p>
 
     <div class="setup-cards" id="setup-choices">
       <div class="setup-card" onclick="showForm('create')">
         <span class="setup-card-icon">+</span>
         <div class="setup-card-title">Create Project</div>
-        <div class="setup-card-desc">Start a new collaborative session and invite your team</div>
+        <div class="setup-card-desc">Start a new session and invite your team</div>
       </div>
       <div class="setup-card" onclick="showForm('join')">
         <span class="setup-card-icon">&rarr;</span>
         <div class="setup-card-title">Join Project</div>
-        <div class="setup-card-desc">Connect to an existing session with an invite code</div>
+        <div class="setup-card-desc">Connect with an invite code</div>
       </div>
     </div>
 
     <div class="setup-form" id="create-form">
-      <h3>Create a Project</h3>
+      <h3>Create a project</h3>
       <div class="form-group">
         <label>Project Name</label>
         <input type="text" id="project-name" placeholder="e.g. HackathonApp" value="HackathonApp">
@@ -1367,15 +780,15 @@ html, body {
       </div>
       <div class="form-actions">
         <button class="btn btn-ghost" onclick="showChoices()">Back</button>
-        <button class="btn btn-primary" onclick="launchApp()">Launch Conductor</button>
+        <button class="btn btn-primary" onclick="launch()">Launch</button>
       </div>
     </div>
 
     <div class="setup-form" id="join-form">
-      <h3>Join a Project</h3>
+      <h3>Join a project</h3>
       <div class="form-group">
         <label>Invite Code</label>
-        <input type="text" id="join-code" placeholder="e.g. MESH-X7K9" style="text-transform: uppercase; letter-spacing: 2px;">
+        <input type="text" id="join-code" placeholder="MESH-X7K9" style="text-transform:uppercase;letter-spacing:2px">
       </div>
       <div class="form-group">
         <label>Your Name</label>
@@ -1383,553 +796,214 @@ html, body {
       </div>
       <div class="form-actions">
         <button class="btn btn-ghost" onclick="showChoices()">Back</button>
-        <button class="btn btn-primary" onclick="launchApp()">Connect</button>
+        <button class="btn btn-primary" onclick="launch()">Connect</button>
       </div>
     </div>
   </div>
 </div>
 
-<!-- ==================== MAIN APP ==================== -->
+<!-- ===== LOADING SCREEN ===== -->
+<div id="loading">
+  <div class="loading-dots">
+    <div class="loading-dot"></div>
+    <div class="loading-dot"></div>
+    <div class="loading-dot"></div>
+    <div class="loading-dot"></div>
+    <div class="loading-dot"></div>
+  </div>
+  <div class="loading-label">connecting</div>
+</div>
+
+<!-- ===== MAIN APP ===== -->
 <div id="app">
 
-  <!-- Header -->
-  <header class="header">
-    <div class="header-logo">
-      <svg viewBox="0 0 72 72" fill="none" width="24" height="24">
-        <circle cx="36" cy="12" r="5" fill="#06b6d4" opacity="0.9"/>
-        <circle cx="12" cy="52" r="5" fill="#8b5cf6" opacity="0.9"/>
-        <circle cx="60" cy="52" r="5" fill="#10b981" opacity="0.9"/>
-        <line x1="36" y1="17" x2="14" y2="48" stroke="#06b6d4" stroke-width="1.5" opacity="0.4"/>
-        <line x1="36" y1="17" x2="58" y2="48" stroke="#06b6d4" stroke-width="1.5" opacity="0.4"/>
-        <line x1="15" y1="52" x2="57" y2="52" stroke="#8b5cf6" stroke-width="1.5" opacity="0.4"/>
-      </svg>
-      Mesh
-    </div>
+  <header class="header stagger">
+    <span class="header-logo">Mesh</span>
     <div class="header-sep"></div>
-    <div class="header-project">
-      <span class="header-project-name" id="header-project-name">HackathonApp</span>
-      <span style="color:var(--text-muted)">·</span>
-      <span id="header-invite-code" style="font-family:var(--font-mono);color:var(--text-muted);font-size:11px;cursor:pointer" onclick="showInviteModal()">MESH-X7K9</span>
-    </div>
-    <div class="header-agents">
-      <div class="agent-dot"></div>
-      <div class="agent-dot"></div>
-      <div class="agent-dot warning"></div>
-      <div class="agent-dot"></div>
-      <span class="header-agent-count">4 agents</span>
-    </div>
-    <div class="header-timer" id="header-timer">
-      <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="8" cy="8" r="6.5"/><path d="M8 4v4l3 2"/></svg>
-      <span id="timer-display">02:47:13</span>
-    </div>
-    <div class="header-actions">
-      <button class="header-btn" title="Invite" onclick="showInviteModal()">
-        <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M8 2v12M2 8h12"/></svg>
-      </button>
-      <button class="header-btn" title="Settings">
-        <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="8" cy="8" r="3"/><path d="M8 1v2M8 13v2M1 8h2M13 8h2M3 3l1.5 1.5M11.5 11.5L13 13M3 13l1.5-1.5M11.5 4.5L13 3"/></svg>
-      </button>
+    <div class="header-project"><strong id="h-project">HackathonApp</strong></div>
+    <span class="header-code" id="h-code" onclick="showInvite()">MESH-X7K9</span>
+    <div class="header-right">
+      <div class="header-agents" id="h-dots"></div>
+      <span class="header-count" id="h-count">3 online</span>
+      <button class="header-invite-btn" onclick="showInvite()">Invite</button>
     </div>
   </header>
 
-  <!-- File Tree -->
-  <aside class="filetree-panel">
-    <div class="panel-header">
-      <span>Explorer</span>
-      <span style="font-size:10px;color:var(--text-muted);text-transform:none;letter-spacing:0">24 files</span>
-    </div>
-    <div class="filetree" id="filetree"></div>
+  <aside class="agents-panel">
+    <div class="panel-title stagger">Agents</div>
+    <div class="agents-list" id="agents-list"></div>
   </aside>
 
-  <!-- Center Panel -->
-  <main class="center-panel">
-    <!-- Agent Grid -->
-    <section class="agent-grid-section">
-      <div class="agent-grid-header">
-        <span class="agent-grid-title">Connected Agents</span>
-        <div style="display:flex;gap:6px;align-items:center">
-          <button class="header-btn" id="toggle-topo-btn" title="Toggle mesh topology" onclick="toggleTopology()" style="width:28px;height:28px">
-            <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" width="14" height="14"><circle cx="4" cy="4" r="2"/><circle cx="12" cy="4" r="2"/><circle cx="8" cy="12" r="2"/><line x1="5.5" y1="5" x2="7" y2="10.5"/><line x1="10.5" y1="5" x2="9" y2="10.5"/><line x1="6" y1="4" x2="10" y2="4"/></svg>
-          </button>
-          <span class="agent-grid-badge" id="agent-count-badge">4 online</span>
-        </div>
-      </div>
-      <!-- Mesh Topology Graph -->
-      <div class="topology-container" id="topology-container" style="display:none">
-        <svg class="topology-svg" id="topology-svg" viewBox="0 0 600 160"></svg>
-      </div>
-      <div class="agent-grid" id="agent-grid"></div>
-    </section>
+  <section class="feed-panel">
+    <div class="panel-title stagger">Activity</div>
+    <div class="feed-list" id="feed-list"></div>
+  </section>
 
-    <!-- Terminal -->
-    <section class="terminal-section">
-      <div class="terminal-header">
-        <button class="terminal-tab active"><span class="tab-dot"></span> Your Claude</button>
-        <button class="terminal-tab" onclick="switchTermView('logs')">Mesh Logs</button>
-      </div>
-      <div class="terminal-body" id="terminal-body"></div>
-      <div class="terminal-input-area">
-        <span class="terminal-input-prompt">❯</span>
-        <input class="terminal-input" id="terminal-input" placeholder="Send a message to Claude..." />
-      </div>
-    </section>
-  </main>
-
-  <!-- Activity Panel -->
-  <aside class="activity-panel">
-    <div class="activity-tabs">
-      <button class="activity-tab active" onclick="switchActivityTab('events')">Events</button>
-      <button class="activity-tab" onclick="switchActivityTab('decisions')">Decisions</button>
-      <button class="activity-tab" onclick="switchActivityTab('comms')">Comms<span class="tab-badge" id="comms-badge" style="display:none"></span></button>
-      <button class="activity-tab" onclick="switchActivityTab('milestones')">Tasks</button>
-    </div>
-    <div class="activity-content">
-      <div class="activity-feed-container active" id="events-tab">
-        <div class="activity-feed" id="event-feed"></div>
-      </div>
-      <div class="activity-feed-container" id="decisions-tab">
-        <div class="activity-feed" id="decision-feed"></div>
-      </div>
-      <div class="activity-feed-container" id="comms-tab">
-        <div class="activity-feed" id="comms-feed"></div>
-      </div>
-      <div class="activity-feed-container" id="milestones-tab">
-        <div class="heatmap-bar" id="heatmap-bar"></div>
-        <div class="heatmap-label"><span>File activity (last 30min)</span><span>auth · api · ui · db</span></div>
-        <div class="activity-feed" id="milestone-feed"></div>
-      </div>
-    </div>
-  </aside>
-
-  <!-- Status Bar -->
-  <footer class="statusbar">
-    <div class="status-item">
-      <span class="status-dot connected"></span>
-      <span>Connected</span>
-    </div>
-    <div class="status-item">
-      <span style="color:var(--amber)">&#9679;</span>
-      <span>Locks: <span class="status-value" id="lock-count">3</span></span>
-    </div>
-    <div class="status-item">
-      <span>Events: <span class="status-value" id="event-count">0</span></span>
-    </div>
-    <div class="status-item">
-      <span>Conflicts: <span class="status-value" id="conflict-count">0</span></span>
-    </div>
-    <div class="statusbar-right">
-      <span style="font-family:var(--font-mono);color:var(--text-muted)">ws://localhost:3747</span>
-    </div>
-  </footer>
 </div>
 
-<!-- Invite Modal -->
+<!-- ===== INVITE MODAL ===== -->
 <div class="modal-overlay" id="invite-modal">
   <div class="modal">
-    <h3>Invite Collaborators</h3>
-    <p>Share this code with your team. They'll connect their Claude Code instances to this Mesh session.</p>
-    <div class="invite-code">
-      <span id="modal-invite-code">MESH-X7K9</span>
-      <button class="copy-btn" onclick="copyInviteCode()">Copy</button>
+    <h3>Invite teammates</h3>
+    <p>Share this code. Their Claude Code instances will connect automatically via MCP.</p>
+    <div class="invite-code-box">
+      <span class="invite-code-text" id="m-code">MESH-X7K9</span>
+      <button class="copy-btn" onclick="copyCode()">Copy</button>
     </div>
-    <p style="font-size:11px;color:var(--text-muted);margin-bottom:12px">Or share the CLI command:</p>
-    <div style="padding:8px 12px;background:var(--bg-input);border-radius:var(--radius);font-family:var(--font-mono);font-size:11px;color:var(--text-secondary);margin-bottom:20px;border:1px solid var(--border)">
-      mesh join MESH-X7K9 --name "TeammateName"
-    </div>
-    <button class="modal-close" onclick="hideInviteModal()">Done</button>
+    <div class="cli-hint">mesh join MESH-X7K9 --name "Name"</div>
+    <button class="modal-close" onclick="hideInvite()">Done</button>
   </div>
 </div>
 
-<!-- Toast Container -->
-<div class="toast-container" id="toast-container"></div>
+<!-- ===== TOAST ===== -->
+<div class="toast-container" id="toasts"></div>
 
 <script>
-/* ============================================================
-   MESH CONDUCTOR — JavaScript
-   ============================================================ */
+/* ================================================================
+   MESH CONDUCTOR — Demo
+   ================================================================ */
 
-// --- Mock Data ---
+// --- Data ---
 const agents = [
   {
-    id: 'divya-001',
+    id: 'divya-01',
     name: 'Divya',
     branch: 'main',
     status: 'working',
-    task: 'Building authentication module with JWT tokens and session management',
-    files: ['src/auth/auth.service.ts', 'src/auth/jwt.strategy.ts', 'src/auth/auth.controller.ts'],
-    avatar: 'av-cyan',
-    isYou: true,
-    locks: ['src/auth/auth.service.ts', 'src/auth/jwt.strategy.ts']
+    task: 'Building user authentication with JWT',
+    locks: ['src/auth.ts', 'src/jwt.ts'],
+    isYou: true
   },
   {
-    id: 'alex-002',
+    id: 'alex-02',
     name: 'Alex',
     branch: 'feat/api',
     status: 'working',
-    task: 'Implementing REST API endpoints for user management and CRUD operations',
-    files: ['src/api/users.controller.ts', 'src/api/users.service.ts', 'src/models/user.ts'],
-    avatar: 'av-purple',
-    isYou: false,
-    locks: ['src/api/users.controller.ts']
+    task: 'Creating REST API endpoints for users',
+    locks: ['src/routes.ts'],
+    isYou: false
   },
   {
-    id: 'sam-003',
+    id: 'sam-03',
     name: 'Sam',
-    branch: 'feat/frontend',
-    status: 'thinking',
-    task: 'Designing the dashboard layout with responsive grid and dark theme',
-    files: ['src/components/Dashboard.tsx', 'src/styles/theme.css'],
-    avatar: 'av-green',
-    isYou: false,
-    locks: []
-  },
-  {
-    id: 'jordan-004',
-    name: 'Jordan',
     branch: 'feat/db',
-    status: 'working',
-    task: 'Setting up PostgreSQL schema with migrations and seed data',
-    files: ['prisma/schema.prisma', 'prisma/migrations/001_init.sql', 'src/db/seed.ts'],
-    avatar: 'av-amber',
-    isYou: false,
-    locks: ['prisma/schema.prisma']
+    status: 'thinking',
+    task: 'Designing the database schema',
+    locks: ['schema.sql'],
+    isYou: false
   }
-];
-
-const fileTree = [
-  { name: 'src', type: 'folder', depth: 0, open: true },
-  { name: 'api', type: 'folder', depth: 1, open: true },
-  { name: 'users.controller.ts', type: 'ts', depth: 2, lock: 'Alex' },
-  { name: 'users.service.ts', type: 'ts', depth: 2 },
-  { name: 'users.dto.ts', type: 'ts', depth: 2 },
-  { name: 'auth', type: 'folder', depth: 1, open: true },
-  { name: 'auth.service.ts', type: 'ts', depth: 2, lock: 'You' },
-  { name: 'auth.controller.ts', type: 'ts', depth: 2 },
-  { name: 'jwt.strategy.ts', type: 'ts', depth: 2, lock: 'You' },
-  { name: 'guards', type: 'folder', depth: 2, open: false },
-  { name: 'components', type: 'folder', depth: 1, open: true },
-  { name: 'Dashboard.tsx', type: 'ts', depth: 2, lock: 'Sam' },
-  { name: 'Sidebar.tsx', type: 'ts', depth: 2 },
-  { name: 'Header.tsx', type: 'ts', depth: 2 },
-  { name: 'models', type: 'folder', depth: 1, open: false },
-  { name: 'db', type: 'folder', depth: 1, open: false },
-  { name: 'styles', type: 'folder', depth: 1, open: false },
-  { name: 'prisma', type: 'folder', depth: 0, open: true },
-  { name: 'schema.prisma', type: 'file', depth: 1, lock: 'Jordan' },
-  { name: 'migrations', type: 'folder', depth: 1, open: false },
-  { name: 'package.json', type: 'json', depth: 0 },
-  { name: 'tsconfig.json', type: 'json', depth: 0 },
-  { name: '.env', type: 'file', depth: 0 },
-  { name: 'README.md', type: 'md', depth: 0 }
 ];
 
 const initialEvents = [
-  { time: '14:02', type: 'intent', dev: 'Divya', text: 'Starting work on JWT authentication module', files: ['src/auth/auth.service.ts'] },
-  { time: '14:03', type: 'file_lock', dev: 'Divya', text: 'Locked auth service files for exclusive editing', files: ['src/auth/auth.service.ts', 'src/auth/jwt.strategy.ts'] },
-  { time: '14:05', type: 'intent', dev: 'Alex', text: 'Building user management REST API endpoints', files: ['src/api/users.controller.ts'] },
-  { time: '14:06', type: 'decision', dev: 'Jordan', text: 'Using PostgreSQL with Prisma ORM for database layer', files: ['prisma/schema.prisma'] },
-  { time: '14:08', type: 'file_lock', dev: 'Alex', text: 'Locked users controller for API implementation', files: ['src/api/users.controller.ts'] },
-  { time: '14:10', type: 'question', dev: 'Alex', text: 'What auth middleware pattern should I use for the API routes?', files: [] },
-  { time: '14:12', type: 'answer', dev: 'Divya', text: 'Use the @UseGuards(JwtAuthGuard) decorator — I\'m building it now in jwt.strategy.ts', files: [] },
-  { time: '14:15', type: 'intent', dev: 'Sam', text: 'Designing dashboard layout with component-based architecture', files: ['src/components/Dashboard.tsx'] },
-  { time: '14:18', type: 'decision', dev: 'Divya', text: 'JWT tokens stored in httpOnly cookies, not localStorage, for security', files: ['src/auth/auth.service.ts'] },
-  { time: '14:20', type: 'file_lock', dev: 'Jordan', text: 'Locked Prisma schema for migration setup', files: ['prisma/schema.prisma'] },
-];
-
-const decisions = [
-  { category: 'library', summary: 'Using Prisma ORM for database layer', rationale: 'Type-safe queries, auto-generated client, easy migrations. Rejected Drizzle (less mature) and TypeORM (verbose).', dev: 'Jordan', time: '14:06' },
-  { category: 'architecture', summary: 'JWT tokens in httpOnly cookies', rationale: 'Prevents XSS token theft. Rejected localStorage approach due to security concerns.', dev: 'Divya', time: '14:18' },
-  { category: 'pattern', summary: 'Controller-Service-Repository pattern', rationale: 'Clean separation of concerns. Each layer handles one responsibility. Standard NestJS pattern.', dev: 'Alex', time: '14:09' },
-  { category: 'api_contract', summary: 'REST endpoints follow /api/v1/{resource} convention', rationale: 'Versioned API allows future breaking changes without affecting clients.', dev: 'Alex', time: '14:14' },
-];
-
-const communications = [
-  {
-    qFrom: 'Alex', question: 'What auth middleware pattern should I use for the API routes? I need to protect the /users endpoints.',
-    aFrom: 'Divya', answer: 'Use the @UseGuards(JwtAuthGuard) decorator — I\'m building it now in jwt.strategy.ts. Should be ready in ~10 min.',
-    resolved: true
-  },
-  {
-    qFrom: 'Sam', question: 'What color palette are we using? I need the design tokens for the dashboard theme.',
-    aFrom: null, answer: null,
-    resolved: false
-  },
-  {
-    qFrom: 'Jordan', question: 'Should the User model include a `role` field? I see Alex has user types in the DTO.',
-    aFrom: 'Alex', answer: 'Yes, add role as an enum: ADMIN, USER, MODERATOR. I\'ll update the DTO to match.',
-    resolved: true
-  }
-];
-
-const terminalLines = [
-  { type: 'prompt', text: '❯ claude' },
-  { type: 'info', text: '\n  ╭──────────────────────────────────────╮' },
-  { type: 'info', text: '  │  Claude Code v1.2.0                  │' },
-  { type: 'info', text: '  │  Model: claude-opus-4-6         │' },
-  { type: 'info', text: '  │  Mesh: Connected (4 agents)          │' },
-  { type: 'info', text: '  ╰──────────────────────────────────────╯\n' },
-  { type: 'prompt', text: '❯ Build the JWT authentication module with refresh token rotation' },
-  { type: 'output', text: '\n  I\'ll build the JWT auth module. Let me first check what the team is doing...\n' },
-  { type: 'tool', name: 'pair_get_partner_context', detail: 'Fetching team status...' },
-  { type: 'output', text: '\n  Partner context received. Alex is building the API routes and expects auth guards.\n  Jordan has the DB schema — User model is ready with role field.\n' },
-  { type: 'tool', name: 'pair_broadcast_intent', detail: 'Broadcasting: Building JWT auth with refresh token rotation' },
-  { type: 'success', text: '  ✓ Intent broadcast. No conflicts detected.\n' },
-  { type: 'tool', name: 'pair_lock_files', detail: 'Locking: src/auth/auth.service.ts, src/auth/jwt.strategy.ts' },
-  { type: 'success', text: '  ✓ Files locked successfully.\n' },
-  { type: 'output', text: '  Now building the auth service...\n' },
-  { type: 'file', path: 'src/auth/auth.service.ts', adds: [
-    '+ import { Injectable } from \'@nestjs/common\';',
-    '+ import { JwtService } from \'@nestjs/jwt\';',
-    '+ import { UsersService } from \'../api/users.service\';',
-    '+ ',
-    '+ @Injectable()',
-    '+ export class AuthService {',
-    '+ ··constructor(',
-    '+ ····private jwtService: JwtService,',
-    '+ ····private usersService: UsersService,',
-    '+ ··) {}',
-  ], removes: [] },
-  { type: 'output', text: '\n  Creating JWT strategy with refresh token rotation...\n' },
-  { type: 'file', path: 'src/auth/jwt.strategy.ts', adds: [
-    '+ import { PassportStrategy } from \'@nestjs/passport\';',
-    '+ import { Strategy, ExtractJwt } from \'passport-jwt\';',
-    '+ ',
-    '+ export class JwtStrategy extends PassportStrategy(Strategy) {',
-    '+ ··constructor() {',
-    '+ ····super({',
-    '+ ······jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),',
-    '+ ······secretOrKey: process.env.JWT_SECRET,',
-    '+ ····});',
-    '+ ··}',
-  ], removes: [] },
-  { type: 'tool', name: 'pair_record_decision', detail: 'Recording: JWT tokens in httpOnly cookies, not localStorage' },
-  { type: 'success', text: '  ✓ Decision recorded and shared with team.\n' },
+  { time: '2:02', type: 'intent', dev: 'Divya', text: 'Starting work on user authentication', files: ['src/auth.ts'] },
+  { time: '2:03', type: 'lock', dev: 'Divya', text: 'Locked auth files', files: ['src/auth.ts', 'src/jwt.ts'] },
+  { time: '2:05', type: 'intent', dev: 'Alex', text: 'Building user CRUD endpoints', files: ['src/routes.ts'] },
+  { time: '2:06', type: 'decision', dev: 'Sam', text: 'Using PostgreSQL with Prisma ORM', files: [] },
+  { time: '2:08', type: 'lock', dev: 'Alex', text: 'Locked routes file', files: ['src/routes.ts'] },
+  { time: '2:10', type: 'question', dev: 'Alex', text: 'What auth pattern should I use for API routes?', files: [] },
+  { time: '2:12', type: 'answer', dev: 'Divya', text: 'Use JWT middleware, building it now', files: [] },
+  { time: '2:15', type: 'decision', dev: 'Divya', text: 'JWT stored in httpOnly cookies for security', files: ['src/auth.ts'] },
 ];
 
 const simulatedEvents = [
-  { delay: 5000, event: { time: null, type: 'heartbeat', dev: 'Jordan', text: 'Working: writing User model migration', files: [] } },
-  { delay: 10000, event: { time: null, type: 'intent', dev: 'Sam', text: 'Creating reusable Button and Input components', files: ['src/components/Button.tsx', 'src/components/Input.tsx'] } },
-  { delay: 16000, event: { time: null, type: 'decision', dev: 'Sam', text: 'Using CSS Modules over Tailwind — keeps bundle smaller for hackathon demo', files: ['src/styles/'] } },
-  { delay: 22000, event: { time: null, type: 'file_lock', dev: 'Sam', text: 'Locked component files for UI work', files: ['src/components/Button.tsx'] } },
-  { delay: 30000, event: { time: null, type: 'question', dev: 'Jordan', text: 'Should I add created_at / updated_at timestamps to all models?', files: [] } },
-  { delay: 38000, event: { time: null, type: 'conflict', dev: 'System', text: 'File overlap detected: Sam and Alex both targeting src/components/ directory. Severity: warning', files: ['src/components/'] } },
-  { delay: 45000, event: { time: null, type: 'answer', dev: 'Divya', text: 'Yes, add timestamps. Use Prisma\'s @updatedAt directive.', files: [] } },
-  { delay: 52000, event: { time: null, type: 'file_unlock', dev: 'Jordan', text: 'Released Prisma schema lock — migration complete', files: ['prisma/schema.prisma'] } },
-  { delay: 60000, event: { time: null, type: 'blocker_resolved', dev: 'Alex', text: 'Auth guard is now available — unblocked API route protection', files: [] } },
+  { delay: 6000, ev: { type: 'intent', dev: 'Sam', text: 'Creating user and post tables', files: ['schema.sql'] } },
+  { delay: 14000, ev: { type: 'lock', dev: 'Sam', text: 'Locked schema for migration', files: ['schema.sql'] } },
+  { delay: 22000, ev: { type: 'question', dev: 'Sam', text: 'Should all models have timestamps?', files: [] } },
+  { delay: 30000, ev: { type: 'answer', dev: 'Divya', text: 'Yes, use Prisma @updatedAt', files: [] } },
+  { delay: 38000, ev: { type: 'conflict', dev: 'System', text: 'Alex and Divya both reference user model', files: ['src/user.ts'] } },
+  { delay: 46000, ev: { type: 'decision', dev: 'Alex', text: 'Endpoints follow /api/v1/{resource} pattern', files: [] } },
+  { delay: 54000, ev: { type: 'unlock', dev: 'Sam', text: 'Released schema lock, migration done', files: ['schema.sql'] } },
 ];
 
-const simulatedTerminal = [
-  { delay: 8000, lines: [
-    { type: 'output', text: '\n  Implementing token refresh endpoint...\n' },
-    { type: 'tool', name: 'Read', detail: 'Reading src/api/users.service.ts to understand User model' },
-  ]},
-  { delay: 15000, lines: [
-    { type: 'output', text: '\n  User model has role field. Building role-based guards...\n' },
-    { type: 'file', path: 'src/auth/roles.guard.ts', adds: [
-      '+ import { CanActivate, ExecutionContext } from \'@nestjs/common\';',
-      '+ ',
-      '+ export class RolesGuard implements CanActivate {',
-      '+ ··canActivate(context: ExecutionContext): boolean {',
-      '+ ····const roles = this.reflector.get<string[]>(\'roles\', context.getHandler());',
-      '+ ····if (!roles) return true;',
-      '+ ····const user = request.user;',
-      '+ ····return roles.includes(user.role);',
-      '+ ··}',
-      '+ }',
-    ], removes: [] },
-  ]},
-  { delay: 25000, lines: [
-    { type: 'tool', name: 'pair_ask_partner', detail: 'Asking Alex: Do you need the auth guard to support API key auth too?' },
-    { type: 'output', text: '\n  Question sent to Alex. Continuing with JWT-only for now...\n' },
-  ]},
-  { delay: 35000, lines: [
-    { type: 'success', text: '\n  ✓ Auth module complete. Created 4 files:\n' },
-    { type: 'output', text: '    • src/auth/auth.service.ts (89 lines)' },
-    { type: 'output', text: '    • src/auth/auth.controller.ts (42 lines)' },
-    { type: 'output', text: '    • src/auth/jwt.strategy.ts (35 lines)' },
-    { type: 'output', text: '    • src/auth/roles.guard.ts (28 lines)\n' },
-    { type: 'tool', name: 'pair_unlock_files', detail: 'Releasing locks on auth files' },
-    { type: 'success', text: '  ✓ Files unlocked. Team notified.\n' },
-  ]},
-  { delay: 48000, lines: [
-    { type: 'prompt', text: '\n❯ Now build the auth tests and integrate with Alex\'s user routes' },
-    { type: 'output', text: '\n  Let me check the current team state first...\n' },
-    { type: 'tool', name: 'pair_get_partner_context', detail: 'Fetching updated team context...' },
-  ]},
+const simulatedStatusChanges = [
+  { delay: 10000, agentId: 'sam-03', status: 'working', task: 'Writing migration files' },
+  { delay: 26000, agentId: 'alex-02', status: 'thinking', task: 'Reviewing auth integration...' },
+  { delay: 36000, agentId: 'alex-02', status: 'working', task: 'Integrating JWT guards into routes' },
+  { delay: 50000, agentId: 'sam-03', status: 'idle', task: 'Schema work complete' },
 ];
 
-// --- State ---
-let eventCount = 0;
-let conflictCount = 0;
-let timerSeconds = 10033; // 2h 47m 13s
+// --- Render ---
+let firstRender = true;
 
-// --- Rendering Functions ---
-function renderFileTree() {
-  const container = document.getElementById('filetree');
-  container.innerHTML = fileTree.map(f => {
-    const indent = '<span class="indent"></span>'.repeat(f.depth);
-    let iconClass = 'file-icon';
-    let icon = '◇';
-    if (f.type === 'folder') { iconClass = 'folder-icon'; icon = f.open ? '▾' : '▸'; }
-    else if (f.type === 'ts') { iconClass = 'ts-icon'; icon = 'TS'; }
-    else if (f.type === 'json') { iconClass = 'json-icon'; icon = '{}'; }
-    else if (f.type === 'css') { iconClass = 'css-icon'; icon = '#'; }
-    else if (f.type === 'md') { iconClass = 'md-icon'; icon = 'M'; }
+function renderAgents() {
+  const list = document.getElementById('agents-list');
+  list.innerHTML = agents.map((a, i) => {
+    const initials = a.name.substring(0, 2).toUpperCase();
+    const statusLabels = { working: 'working', thinking: 'thinking', idle: 'idle', waiting: 'waiting' };
+    const locksHtml = a.locks.length
+      ? `<div class="agent-locks">${a.locks.map(l => `<span class="lock-tag"><span class="lock-icon">&#9632;</span>${l}</span>`).join('')}</div>`
+      : '';
+    const staggerCls = firstRender ? 'stagger' : 'stagger in';
+    const staggerStyle = firstRender ? `animation-delay:${0.2 + i * 0.12}s` : '';
 
-    let lockHtml = '';
-    if (f.lock === 'You') lockHtml = '<span class="tree-lock lock-self">You</span>';
-    else if (f.lock === 'Alex') lockHtml = '<span class="tree-lock lock-partner">Alex</span>';
-    else if (f.lock === 'Sam') lockHtml = '<span class="tree-lock lock-partner">Sam</span>';
-    else if (f.lock === 'Jordan') lockHtml = '<span class="tree-lock lock-other">Jordan</span>';
-    else if (f.lock) lockHtml = `<span class="tree-lock lock-other">${f.lock}</span>`;
-
-    return `<div class="tree-item ${f.type === 'folder' ? 'folder' : ''}">
-      ${indent}
-      <span class="tree-icon ${iconClass}">${icon}</span>
-      <span class="tree-name">${f.name}</span>
-      ${lockHtml}
+    return `<div class="agent-card ${a.isYou ? 'is-you' : ''} ${staggerCls}" style="${staggerStyle}" id="card-${a.id}">
+      <div class="agent-top">
+        <div class="agent-avatar">${initials}</div>
+        <div class="agent-info">
+          <div class="agent-name">${a.name}${a.isYou ? ' <span class="you-tag">you</span>' : ''}</div>
+          <div class="agent-branch">${a.branch}</div>
+        </div>
+        <div class="agent-status">
+          <div class="status-dot ${a.status}"></div>
+          <span class="status-label">${statusLabels[a.status]}</span>
+        </div>
+      </div>
+      <div class="agent-task">${a.task}</div>
+      ${locksHtml}
     </div>`;
   }).join('');
 }
 
-function renderAgentGrid() {
-  const container = document.getElementById('agent-grid');
-  container.innerHTML = agents.map(a => {
-    const statusLabel = { working: 'Working', thinking: 'Thinking', waiting: 'Waiting', idle: 'Idle' }[a.status];
-    return `<div class="agent-card ${a.status} ${a.isYou ? 'you' : ''}">
-      <div class="agent-card-top">
-        <div class="agent-avatar ${a.avatar}">${a.name.substring(0, 2).toUpperCase()}</div>
-        <div class="agent-info">
-          <div class="agent-name">${a.name} ${a.isYou ? '<span class="you-badge">You</span>' : ''}</div>
-          <div class="agent-branch">${a.branch}</div>
-        </div>
-        <div class="agent-status-dot ${a.status}" title="${statusLabel}"></div>
-      </div>
-      <div class="agent-task">${a.task}</div>
-      <div class="agent-meta">
-        <span class="agent-meta-item">
-          <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 4l6 4 6-4"/><rect x="1" y="3" width="14" height="10" rx="2"/></svg>
-          ${a.files.length} files
-        </span>
-        <span class="agent-meta-item">
-          <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="1" width="10" height="14" rx="1"/><path d="M6 5h4M6 8h4M6 11h2"/></svg>
-          ${a.locks.length} locks
-        </span>
-        <span class="agent-meta-item" style="color:${a.status === 'working' ? 'var(--green)' : a.status === 'thinking' ? 'var(--amber)' : 'var(--text-muted)'}">
-          ${statusLabel}
-        </span>
-      </div>
-    </div>`;
-  }).join('');
+function renderFeed(events) {
+  const list = document.getElementById('feed-list');
+  list.innerHTML = events.map((ev, i) => feedItemHtml(ev, i)).join('');
+}
+
+function feedItemHtml(ev, index) {
+  const time = ev.time || now();
+  const isConflict = ev.type === 'conflict';
+  const filesHtml = ev.files && ev.files.length
+    ? `<div class="feed-files">${ev.files.map(f => `<span class="feed-file">${f}</span>`).join('')}</div>`
+    : '';
+  const delay = typeof index === 'number' ? `animation-delay:${0.3 + index * 0.06}s` : '';
+  const cls = typeof index === 'number' ? 'stagger-right' : 'feed-item-new';
+
+  return `<div class="feed-item ${isConflict ? 'is-conflict' : ''} ${cls}" style="${delay}">
+    <span class="feed-time">${time}</span>
+    <span class="feed-type ${ev.type}">${ev.type}</span>
+    <div class="feed-body">
+      <div class="feed-dev">${ev.dev}</div>
+      <div class="feed-text">${ev.text}</div>
+      ${filesHtml}
+    </div>
+  </div>`;
 }
 
 function addEvent(ev) {
-  const feed = document.getElementById('event-feed');
-  const time = ev.time || new Date().toLocaleTimeString('en-US', { hour12: false, hour: '2-digit', minute: '2-digit' });
-  const isConflict = ev.type === 'conflict';
+  const list = document.getElementById('feed-list');
+  ev.time = ev.time || now();
+  const div = document.createElement('div');
+  div.innerHTML = feedItemHtml(ev).trim();
+  const item = div.firstChild;
+  list.appendChild(item);
+  list.scrollTop = list.scrollHeight;
 
-  const filesHtml = ev.files && ev.files.length > 0
-    ? `<div class="event-files">${ev.files.map(f => `<span class="event-file-tag">${f}</span>`).join('')}</div>`
-    : '';
-
-  const item = document.createElement('div');
-  item.className = `event-item ${isConflict ? 'conflict-event' : ''}`;
-  item.innerHTML = `
-    <span class="event-time">${time}</span>
-    <span class="event-badge ${ev.type}">${ev.type.replace('_', ' ')}</span>
-    <div class="event-body">
-      <div class="event-dev">${ev.dev}</div>
-      <div class="event-text">${ev.text}</div>
-      ${filesHtml}
-    </div>
-  `;
-  feed.appendChild(item);
-  feed.scrollTop = feed.scrollHeight;
-
-  eventCount++;
-  document.getElementById('event-count').textContent = eventCount;
-
-  if (isConflict) {
-    conflictCount++;
-    document.getElementById('conflict-count').textContent = conflictCount;
-    showToast('conflict', `Conflict: ${ev.text}`);
+  if (ev.type === 'conflict') {
+    toast(ev.text);
   }
 }
 
-function renderDecisions() {
-  const feed = document.getElementById('decision-feed');
-  feed.innerHTML = decisions.map(d => `
-    <div class="decision-item">
-      <div class="decision-category">${d.category}</div>
-      <div class="decision-summary">${d.summary}</div>
-      <div class="decision-rationale">${d.rationale}</div>
-      <div class="decision-meta">
-        <span>${d.dev}</span>
-        <span>·</span>
-        <span>${d.time}</span>
-      </div>
-    </div>
-  `).join('');
+function now() {
+  return new Date().toLocaleTimeString('en-US', { hour12: false, hour: '2-digit', minute: '2-digit' });
 }
 
-function renderCommunications() {
-  const feed = document.getElementById('comms-feed');
-  feed.innerHTML = communications.map(c => `
-    <div class="comm-item">
-      <div class="comm-question">
-        <div class="comm-q-mark">Q</div>
-        <div>
-          <div class="comm-q-from">${c.qFrom}'s Claude</div>
-          <div class="comm-q-text">${c.question}</div>
-        </div>
-      </div>
-      ${c.resolved
-        ? `<div class="comm-answer">
-            <div class="comm-a-from">${c.aFrom}'s Claude</div>
-            <div class="comm-a-text">${c.answer}</div>
-           </div>`
-        : '<div class="comm-pending">Awaiting response...</div>'
-      }
-    </div>
-  `).join('');
-}
-
-function renderTerminal() {
-  const body = document.getElementById('terminal-body');
-  body.innerHTML = '';
-  terminalLines.forEach(line => {
-    appendTerminalLine(line);
-  });
-  body.scrollTop = body.scrollHeight;
-}
-
-function appendTerminalLine(line) {
-  const body = document.getElementById('terminal-body');
-  if (line.type === 'tool') {
-    const el = document.createElement('div');
-    el.className = 'term-tool-call';
-    el.innerHTML = `<span class="term-tool-icon">⚡</span>
-      <span class="term-tool-text"><strong>${line.name}</strong> — ${line.detail}</span>`;
-    body.appendChild(el);
-  } else if (line.type === 'file') {
-    const el = document.createElement('div');
-    el.className = 'term-file-change';
-    let code = '';
-    if (line.removes) line.removes.forEach(r => code += `<span class="term-diff-remove">${escHtml(r)}</span>\n`);
-    if (line.adds) line.adds.forEach(a => code += `<span class="term-diff-add">${escHtml(a)}</span>\n`);
-    el.innerHTML = `<div class="term-file-path">${line.path}</div><pre style="margin:0;font-size:11px;line-height:1.5;font-family:var(--font-mono)">${code}</pre>`;
-    body.appendChild(el);
-  } else {
-    const el = document.createElement('span');
-    el.className = `term-line term-${line.type}`;
-    el.textContent = line.text;
-    body.appendChild(el);
-  }
-  body.scrollTop = body.scrollHeight;
-}
-
-function escHtml(s) {
-  return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+// --- Header dots ---
+function renderHeaderDots() {
+  const el = document.getElementById('h-dots');
+  el.innerHTML = agents.map(a =>
+    `<div class="header-dot ${a.status === 'working' ? 'active' : ''}"></div>`
+  ).join('');
+  document.getElementById('h-count').textContent = agents.length + ' online';
 }
 
 // --- UI Interactions ---
@@ -1943,295 +1017,99 @@ function showChoices() {
   document.querySelectorAll('.setup-form').forEach(f => f.classList.remove('active'));
 }
 
-function launchApp() {
-  document.getElementById('setup-screen').classList.add('hidden');
-  document.getElementById('app').classList.add('active');
-  initApp();
-}
-
-function switchActivityTab(tab) {
-  document.querySelectorAll('.activity-tab').forEach(t => t.classList.remove('active'));
-  document.querySelectorAll('.activity-feed-container').forEach(c => c.classList.remove('active'));
-  event.target.classList.add('active');
-  document.getElementById(tab + '-tab').classList.add('active');
-}
-
-function switchTermView(view) {
-  // Toggle terminal tabs
-  document.querySelectorAll('.terminal-tab').forEach(t => t.classList.remove('active'));
-  event.target.classList.add('active');
-}
-
-function showInviteModal() {
+function showInvite() {
   document.getElementById('invite-modal').classList.add('active');
 }
-function hideInviteModal() {
+function hideInvite() {
   document.getElementById('invite-modal').classList.remove('active');
 }
-function copyInviteCode() {
+function copyCode() {
   navigator.clipboard?.writeText('MESH-X7K9');
   const btn = event.target;
-  btn.textContent = 'Copied!';
-  setTimeout(() => btn.textContent = 'Copy', 1500);
+  btn.textContent = 'Copied';
+  setTimeout(() => btn.textContent = 'Copy', 1200);
 }
 
-function showToast(type, text) {
-  const container = document.getElementById('toast-container');
-  const icons = { conflict: '⚠', info: 'ℹ', success: '✓' };
-  const toast = document.createElement('div');
-  toast.className = `toast ${type}`;
-  toast.innerHTML = `<span class="toast-icon">${icons[type]}</span><span class="toast-text">${text}</span>`;
-  container.appendChild(toast);
+document.getElementById('invite-modal')?.addEventListener('click', e => {
+  if (e.target === e.currentTarget) hideInvite();
+});
+
+function toast(text) {
+  const c = document.getElementById('toasts');
+  const t = document.createElement('div');
+  t.className = 'toast conflict-toast';
+  t.innerHTML = `<span class="toast-icon">!</span><span>${text}</span>`;
+  c.appendChild(t);
   setTimeout(() => {
-    toast.style.opacity = '0';
-    toast.style.transform = 'translateX(20px)';
-    toast.style.transition = '0.3s ease';
-    setTimeout(() => toast.remove(), 300);
-  }, 5000);
+    t.style.opacity = '0';
+    t.style.transform = 'translateX(12px)';
+    t.style.transition = '0.25s ease';
+    setTimeout(() => t.remove(), 300);
+  }, 4000);
 }
 
-// --- Timer ---
-function updateTimer() {
-  timerSeconds++;
-  const h = String(Math.floor(timerSeconds / 3600)).padStart(2, '0');
-  const m = String(Math.floor((timerSeconds % 3600) / 60)).padStart(2, '0');
-  const s = String(timerSeconds % 60).padStart(2, '0');
-  document.getElementById('timer-display').textContent = `${h}:${m}:${s}`;
+// --- Launch Sequence ---
+function launch() {
+  const setup = document.getElementById('setup');
+  const loading = document.getElementById('loading');
+  const app = document.getElementById('app');
+
+  // Phase 1: hide setup
+  setup.classList.add('hidden');
+
+  // Phase 2: show loading
+  setTimeout(() => {
+    loading.classList.add('active');
+  }, 400);
+
+  // Phase 3: fade loading, show app
+  setTimeout(() => {
+    loading.classList.add('fade-out');
+  }, 1800);
+
+  setTimeout(() => {
+    loading.classList.remove('active');
+    loading.classList.remove('fade-out');
+    app.classList.add('active');
+    initApp();
+  }, 2200);
 }
 
-// --- Simulation Engine ---
-function startSimulation() {
-  // Simulate incoming events
-  simulatedEvents.forEach(({ delay, event }) => {
-    setTimeout(() => addEvent(event), delay);
+function initApp() {
+  renderAgents();
+  renderFeed(initialEvents);
+  renderHeaderDots();
+
+  // Trigger stagger-in animations
+  requestAnimationFrame(() => {
+    document.querySelectorAll('.stagger').forEach(el => el.classList.add('in'));
+    document.querySelectorAll('.stagger-right').forEach(el => el.classList.add('in'));
   });
 
-  // Simulate terminal output
-  simulatedTerminal.forEach(({ delay, lines }) => {
+  // After initial stagger completes, mark subsequent renders as non-first
+  setTimeout(() => { firstRender = false; }, 1500);
+
+  // Start simulation
+  startSimulation();
+}
+
+function startSimulation() {
+  simulatedEvents.forEach(({ delay, ev }) => {
+    setTimeout(() => addEvent(ev), delay);
+  });
+
+  simulatedStatusChanges.forEach(({ delay, agentId, status, task }) => {
     setTimeout(() => {
-      lines.forEach((line, i) => {
-        setTimeout(() => appendTerminalLine(line), i * 400);
-      });
+      const agent = agents.find(a => a.id === agentId);
+      if (agent) {
+        agent.status = status;
+        agent.task = task;
+        renderAgents();
+        renderHeaderDots();
+      }
     }, delay);
   });
-
-  // Agent status changes
-  setTimeout(() => {
-    agents[2].status = 'working';
-    agents[2].task = 'Building Button and Input components with CSS Modules';
-    renderAgentGrid();
-    showToast('info', '<strong>Sam</strong> started working on UI components');
-  }, 12000);
-
-  setTimeout(() => {
-    agents[1].status = 'thinking';
-    agents[1].task = 'Analyzing auth guard integration patterns...';
-    renderAgentGrid();
-  }, 28000);
-
-  setTimeout(() => {
-    agents[1].status = 'working';
-    agents[1].task = 'Integrating JWT auth guards into user API routes';
-    renderAgentGrid();
-  }, 40000);
-
-  // Periodic heartbeats
-  setInterval(() => {
-    const statuses = ['working', 'thinking', 'working', 'working'];
-    agents.forEach((a, i) => {
-      if (!a.isYou && Math.random() > 0.7) {
-        a.status = statuses[Math.floor(Math.random() * statuses.length)];
-      }
-    });
-    renderAgentGrid();
-  }, 15000);
 }
-
-// --- Terminal Input ---
-document.addEventListener('DOMContentLoaded', () => {
-  const input = document.getElementById('terminal-input');
-  input?.addEventListener('keydown', (e) => {
-    if (e.key === 'Enter' && input.value.trim()) {
-      appendTerminalLine({ type: 'prompt', text: `\n❯ ${input.value}` });
-      const cmd = input.value;
-      input.value = '';
-      setTimeout(() => {
-        appendTerminalLine({ type: 'output', text: `\n  Processing: "${cmd}"...\n` });
-        appendTerminalLine({ type: 'tool', name: 'mesh_get_partner_context', detail: 'Checking team status before starting...' });
-      }, 500);
-    }
-  });
-});
-
-// --- Mesh Topology ---
-let topologyVisible = false;
-
-function toggleTopology() {
-  topologyVisible = !topologyVisible;
-  const container = document.getElementById('topology-container');
-  container.style.display = topologyVisible ? 'block' : 'none';
-  if (topologyVisible) renderTopology();
-}
-
-function renderTopology() {
-  const svg = document.getElementById('topology-svg');
-  const colors = { 'Divya': '#06b6d4', 'Alex': '#8b5cf6', 'Sam': '#10b981', 'Jordan': '#f59e0b' };
-  const statusColors = { working: '#10b981', thinking: '#f59e0b', waiting: '#8b5cf6', idle: '#4b5574' };
-
-  // Node positions — mesh server at center, agents around it
-  const cx = 300, cy = 80;
-  const nodes = [
-    { x: 150, y: 40, agent: agents[0] },
-    { x: 450, y: 40, agent: agents[1] },
-    { x: 100, y: 120, agent: agents[2] },
-    { x: 500, y: 120, agent: agents[3] },
-  ];
-
-  let html = '';
-
-  // Background grid dots (subtle)
-  for (let gx = 30; gx < 580; gx += 40) {
-    for (let gy = 15; gy < 160; gy += 30) {
-      html += `<circle cx="${gx}" cy="${gy}" r="0.5" fill="#1e2740" opacity="0.4"/>`;
-    }
-  }
-
-  // Server hub node
-  html += `
-    <circle cx="${cx}" cy="${cy}" r="16" fill="#111728" stroke="#283352" stroke-width="1"/>
-    <text x="${cx}" y="${cy + 1}" text-anchor="middle" dominant-baseline="middle" fill="#8b95ad" font-family="var(--font-mono)" font-size="8" font-weight="600">MESH</text>
-  `;
-
-  // Connection lines from each agent to hub
-  nodes.forEach((n, i) => {
-    const color = colors[n.agent.name];
-    const isActive = n.agent.status === 'working' || n.agent.status === 'thinking';
-    html += `<line class="topo-line ${isActive ? 'active' : ''}" x1="${n.x}" y1="${n.y}" x2="${cx}" y2="${cy}" stroke="${color}" stroke-opacity="${isActive ? 0.6 : 0.2}" stroke-width="1"/>`;
-  });
-
-  // Peer-to-peer hint lines (dashed, very subtle)
-  for (let i = 0; i < nodes.length; i++) {
-    for (let j = i + 1; j < nodes.length; j++) {
-      html += `<line x1="${nodes[i].x}" y1="${nodes[i].y}" x2="${nodes[j].x}" y2="${nodes[j].y}" stroke="#1e2740" stroke-width="0.5" stroke-dasharray="2 4" opacity="0.3"/>`;
-    }
-  }
-
-  // Agent nodes
-  nodes.forEach((n) => {
-    const color = colors[n.agent.name];
-    const sc = statusColors[n.agent.status];
-    const isYou = n.agent.isYou;
-    html += `
-      <g class="topo-node">
-        <circle cx="${n.x}" cy="${n.y}" r="${isYou ? 14 : 12}" fill="#111728" stroke="${color}" stroke-width="${isYou ? 2 : 1.5}" class="topo-ring"/>
-        ${n.agent.status === 'working' ? `<circle cx="${n.x}" cy="${n.y}" r="4" fill="${sc}" class="topo-pulse"/>` : `<circle cx="${n.x}" cy="${n.y}" r="3" fill="${sc}"/>`}
-        <text class="topo-label" x="${n.x}" y="${n.y + 24}">${n.agent.name}${isYou ? ' (you)' : ''}</text>
-        <text class="topo-status-label" x="${n.x}" y="${n.y + 33}">${n.agent.status}</text>
-      </g>
-    `;
-  });
-
-  // Animated data packets (small circles moving along lines)
-  nodes.forEach((n, i) => {
-    if (n.agent.status === 'working') {
-      const dx = cx - n.x, dy = cy - n.y;
-      const delay = i * 0.5;
-      html += `<circle r="2" fill="${colors[n.agent.name]}" opacity="0.8">
-        <animateMotion dur="2s" repeatCount="indefinite" begin="${delay}s" path="M${n.x},${n.y} L${cx},${cy}"/>
-      </circle>`;
-    }
-  });
-
-  svg.innerHTML = html;
-}
-
-// --- Milestones ---
-const milestones = [
-  { title: 'Database schema & migrations', agent: 'Jordan', status: 'done', time: '14:06' },
-  { title: 'User authentication (JWT)', agent: 'Divya', status: 'in-progress', time: '14:02' },
-  { title: 'REST API endpoints (CRUD)', agent: 'Alex', status: 'in-progress', time: '14:05' },
-  { title: 'Dashboard UI layout', agent: 'Sam', status: 'in-progress', time: '14:15' },
-  { title: 'API route protection (auth guards)', agent: 'Divya', status: 'pending', time: '' },
-  { title: 'Frontend-backend integration', agent: 'Unassigned', status: 'pending', time: '' },
-  { title: 'Error handling & validation', agent: 'Unassigned', status: 'pending', time: '' },
-  { title: 'Demo preparation & deployment', agent: 'Unassigned', status: 'pending', time: '' },
-];
-
-function renderMilestones() {
-  const feed = document.getElementById('milestone-feed');
-  feed.innerHTML = milestones.map(m => {
-    const checkClass = m.status === 'done' ? 'done' : m.status === 'in-progress' ? 'in-progress' : '';
-    const checkIcon = m.status === 'done' ? '&#10003;' : m.status === 'in-progress' ? '&#9679;' : '';
-    const titleClass = m.status === 'done' ? 'done' : '';
-    return `
-      <div class="milestone-item">
-        <div class="milestone-check ${checkClass}">${checkIcon}</div>
-        <div class="milestone-body">
-          <div class="milestone-title ${titleClass}">${m.title}</div>
-          <div class="milestone-meta">
-            <span class="milestone-agent">${m.agent}</span>
-            ${m.time ? ` · started ${m.time}` : ''}
-          </div>
-        </div>
-      </div>
-    `;
-  }).join('');
-}
-
-// --- File Activity Heatmap ---
-function renderHeatmap() {
-  const bar = document.getElementById('heatmap-bar');
-  // Simulated activity levels per area: auth, api, ui, db
-  const areas = [
-    { label: 'auth', level: 0.8, color: '#06b6d4' },
-    { label: 'api', level: 0.6, color: '#8b5cf6' },
-    { label: 'ui', level: 0.3, color: '#10b981' },
-    { label: 'db', level: 0.9, color: '#f59e0b' },
-  ];
-  bar.innerHTML = areas.map(a => `
-    <div class="heatmap-cell" title="${a.label}: ${Math.round(a.level * 100)}% activity">
-      <div class="heat" style="height:${a.level * 100}%;background:${a.color};opacity:0.6"></div>
-    </div>
-  `).join('');
-}
-
-// --- Init ---
-function initApp() {
-  renderFileTree();
-  renderAgentGrid();
-  renderTerminal();
-  renderDecisions();
-  renderCommunications();
-  renderMilestones();
-  renderHeatmap();
-  initialEvents.forEach(ev => addEvent(ev));
-  startSimulation();
-  setInterval(updateTimer, 1000);
-
-  // Update topology if visible
-  setInterval(() => { if (topologyVisible) renderTopology(); }, 5000);
-
-  // Simulate milestone progress
-  setTimeout(() => {
-    milestones[1].status = 'done';
-    milestones[4].status = 'in-progress';
-    milestones[4].agent = 'Divya';
-    milestones[4].time = new Date().toLocaleTimeString('en-US', { hour12: false, hour: '2-digit', minute: '2-digit' });
-    renderMilestones();
-    showToast('success', '<strong>Divya</strong> completed: User authentication (JWT)');
-  }, 36000);
-
-  // Welcome toast
-  setTimeout(() => showToast('success', 'Connected to <strong>HackathonApp</strong> — 4 agents online'), 500);
-
-  // Show comms badge
-  document.getElementById('comms-badge').style.display = 'block';
-}
-
-// Click outside modal to close
-document.getElementById('invite-modal')?.addEventListener('click', (e) => {
-  if (e.target === e.currentTarget) hideInviteModal();
-});
 </script>
 </body>
 </html>
