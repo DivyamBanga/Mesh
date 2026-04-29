@@ -37,6 +37,15 @@ const contextSummariser = new ContextSummariser(eventStore, sessionRegistry);
 const app = express();
 app.use(express.json());
 
+// CORS — allow Conductor UI and any local dev origin
+app.use((_req, res, next) => {
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+  if (_req.method === 'OPTIONS') { res.sendStatus(204); return; }
+  next();
+});
+
 // WebSocket hub (attaches to http.Server)
 const server = http.createServer(app);
 const hub = new WsHub(server, sessionRegistry, eventStore, conflictDetector, projectManager);

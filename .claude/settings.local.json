@@ -5,7 +5,9 @@
       "Bash(open:*)",
       "Bash(mkdir:*)",
       "Bash(cd:*)",
-      "Bash(npm test:*)"
+      "Bash(npm test:*)",
+      "Bash(npx tsc:*)",
+      "Bash(ls:*)"
     ]
   }
 }
